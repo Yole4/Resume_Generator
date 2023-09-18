@@ -52,7 +52,7 @@
   padding: 10px;
 }
 
-.list-clicked{
+.list-clicked {
   background-color: rgb(228, 228, 245);
   border-radius: 20px;
   color: black;
@@ -78,7 +78,7 @@
   margin-bottom: 20px;
   box-sizing: border-box;
   cursor: pointer;
-  text-align: center; 
+  text-align: center;
 }
 
 .template-list img {
@@ -175,6 +175,12 @@
   right: 0px;
 }
 
+.profile-header{
+  top: 15px;
+  right: 15px;
+  position: absolute;
+}
+
 .profile-header:hover {
   background-color: rgb(201, 213, 244);
   height: 35px;
@@ -182,8 +188,25 @@
   border-radius: 50%;
 }
 
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+
+}
+
 .form-control {
   margin-top: 15px;
+}
+
+.form-control button{
+  background-color: rgb(143, 143, 196);
+  cursor: pointer;
+}
+
+.form-control button:hover{
+  background-color: rgb(176, 176, 255);
 }
 
 .form-input {
@@ -193,6 +216,13 @@
   padding-left: 10px;
   margin-top: 10px;
   font-size: 15px;
+  border-color: rgb(246, 238, 227);
+  box-shadow: inset 1px 1px 5px -1px darkgrey;
+  transition: border-color 0.3s;
+}
+
+.form-input:hover{
+  border-color: rgb(142, 142, 242);
 }
 
 .bottom-color {
@@ -202,19 +232,19 @@
   position: fixed;
   background-color: rgb(71, 71, 169);
   clip-path: polygon(0 100%, 100% 100%, 100% 75%, 52% 50%, 48% 50%, 0 75%);
-  z-index: 1; 
+  z-index: 1;
 }
 
 
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 400px) {
   .popup-body {
     width: 100%;
   }
 
-  .template-options{
+  .template-options {
     width: 100%;
-  }  
+  }
 }
 
 @media screen and (max-width: 900px) {
