@@ -337,6 +337,7 @@ body {
   border: none;
   padding: 10px 20px;
   cursor: pointer;
+  height: 50px;
 }
 
 .next-button:hover {
