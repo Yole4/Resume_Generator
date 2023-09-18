@@ -19,6 +19,7 @@ import { FcDocument } from 'react-icons/fc';
 import { BsStars } from 'react-icons/bs';
 import { FaRegSmileBeam } from 'react-icons/fa';
 import { VscFiles } from 'react-icons/vsc';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { BsFillEnvelopeFill } from 'react-icons/bs';
 import { GoogleOAuthProvider, GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
@@ -41,7 +42,7 @@ function Home() {
                     <FcDocument size={35} />
                     <span style={{ position: 'absolute' }}>Resume Maker</span>
                 </div>
-                <div style={{ top: '15px', right: '15px', position: 'absolute' }} onClick={() => setIsOpenPopup(true)} className='profile-header'>
+                <div onClick={() => setIsOpenPopup(true)} className='profile-header'>
                     <span className='dot'></span>
                     <IoPersonCircleSharp size={35} className='profile' />
                 </div>
@@ -162,6 +163,9 @@ function Home() {
                     <div style={{ textAlign: 'center' }}>
                         <h3>Get Started</h3><br />
                     </div>
+                    <div className="modal-close" onClick={() => setIsOpenPopup(false)}>
+                        <AiOutlineCloseCircle size={20} />
+                    </div>
                     <div className="form-control">
                         <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
                             <GoogleLogin
@@ -187,7 +191,7 @@ function Home() {
 
                     <div className='form-control'>
                         <p >Email</p>
-                        <input type="email" className='form-input' placeholder='YourEmail@gmail.com' />
+                        <input type="email" className='form-input' placeholder='Your@gmail.com' />
                     </div>
 
                     <div className='form-control'>
@@ -205,7 +209,7 @@ function Home() {
                     </div>
 
                     <div className='form-control' style={{ textAlign: 'center' }}>
-                        <span>Already have an Account? <a style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={() => { setIsOpenPopup(false); setIsOpenLogin(true); }}>Login</a></span>
+                        <span>Already have an Account? <a style={{ textDecoration: 'underline', cursor: 'pointer', color: 'blue' }} onClick={() => { setIsOpenPopup(false); setIsOpenLogin(true); }}>Login</a></span>
                     </div>
                 </div>
             </div>
@@ -215,6 +219,9 @@ function Home() {
                 <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isOpenLogin ? 'dropBottom .3s linear' : '' }} >
                     <div style={{ textAlign: 'center' }}>
                         <h3>Login</h3><br />
+                    </div>
+                    <div className="modal-close" onClick={() => setIsOpenLogin(false)}>
+                        <AiOutlineCloseCircle size={20}/>
                     </div>
                     <div className="form-control">
                         <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
@@ -236,7 +243,7 @@ function Home() {
 
                     <div className='form-control'>
                         <p >Email</p>
-                        <input type="email" className='form-input' placeholder='YourEmail@gmail.com' />
+                        <input type="email" className='form-input' placeholder='Your@gmail.com' />
                     </div>
 
                     <div className='form-control'>
@@ -249,11 +256,11 @@ function Home() {
                     </div>
 
                     <div className="form-control" style={{ textAlign: 'center' }}>
-                        <span style={{ color: 'red', cursor: 'pointer' }}>Forgot Password? Click Me!</span>
+                        <span style={{ color: 'red', cursor: 'pointer' }}>Forgot Password?</span>
                     </div>
 
                     <div className='form-control' style={{ textAlign: 'center' }}>
-                        <span>Don't have an Account? <a style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={() => { setIsOpenPopup(true); setIsOpenLogin(false); }}>Register</a></span>
+                        <span>Don't have an Account? <a style={{ textDecoration: 'underline', cursor: 'pointer', color: 'blue' }} onClick={() => { setIsOpenPopup(true); setIsOpenLogin(false); }}>Register</a></span>
                     </div>
                 </div>
             </div>
