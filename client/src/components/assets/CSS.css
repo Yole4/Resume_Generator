@@ -241,7 +241,6 @@
 @media screen and (max-width: 500px) {
   .popup-body {
     width: 94%;
-    margin-left: 2%;
   }
 
   .template-options {
