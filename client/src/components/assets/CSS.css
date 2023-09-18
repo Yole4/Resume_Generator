@@ -257,4 +257,10 @@
   .title {
     width: 80%;
   }
+  .title h1{
+    font-size: 25px;
+  }
+  .title p{
+    font-size: 15px;
+  }
 }
