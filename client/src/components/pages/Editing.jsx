@@ -243,7 +243,7 @@ function Editing() {
                                 <div className="description-container">
                                     <div className="form-control" style={{ textAlign: 'left', marginTop: '0' }}>
                                         <span>Objectives</span>
-                                        <textarea name="" id="" cols="30" rows="8" style={{ height: 'auto', padding: '10px' }} className='form-input' placeholder='Write your objectives here...'></textarea>
+                                        <textarea name="" id="" cols="30" rows="8" style={{ height: 'auto', padding: '10px' }} value="I love you so much Mara Cris Lumactod Ugdal❤️!, Keep safe dha always muah❤️❤️❤️❤️." className='form-input' placeholder='Write your objectives here...'></textarea>
                                     </div>
                                 </div>
                             </div>
