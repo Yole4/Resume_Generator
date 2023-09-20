@@ -272,6 +272,10 @@
             transform: translateY(100%);
         }
     }
+    .container *{
+        padding: 0;
+        margin: 0;
+    }
 }
 
 @media (max-width: 600px) {
