@@ -22,12 +22,43 @@ function Editing() {
     const [languageList, setLanguageList] = useState(true);
     const [objectives, setObjectives] = useState(true);
     const [preview, setPreview] = useState(false);
+    const [isSocialLinks, setIsSocialLinks] = useState(true);
 
     const [educationList, setEducationList] = useState({
         second: false,
         third: false,
         testing: false
     });
+
+    // Social and Links
+    const [socialName, setSocialName] = useState(['']); // Initialize with one empty skill
+    const [socialLinks, setSocialLinks] = useState(['']); // Initialize with one empty skill
+
+    const handleAddSocialLinks = () => {
+        setSocialName([...socialName, '']);
+        setSocialLinks([...socialLinks, '']);
+    }
+
+    const removeSocialLinks = (index) => {
+        const updatedSocialName = [...socialName];
+        const updatedSocialLinks = [...socialLinks];
+        updatedSocialName.splice(index, 1);
+        updatedSocialLinks.splice(index, 1);
+        setSocialName(updatedSocialName);
+        setSocialLinks(updatedSocialLinks);
+    };
+
+    const handleSocialLinkChange = (index, value) => {
+        const updatedSocial = [...socialName];
+        updatedSocial[index] = value;
+        setSocialLinks(updatedSocial);
+    };
+
+    const handleSocialNameChange = (index, value) => {
+        const updatedName = [...socialName];
+        updatedName[index] = value;
+        setSocialName(updatedName);
+    }
 
     // skills list
     const [skills, setSkills] = useState(['']); // Initialize with one empty skill
@@ -148,6 +179,52 @@ function Editing() {
                                             <input type="text" className='form-input' placeholder='Date of Birth' />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Website & Social Links */}
+                            <div onClick={() => setIsSocialLinks(isSocialLinks ? false : true)} style={{ cursor: 'pointer', display: 'flex', marginTop: '30px', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F1F2F6', borderRadius: '5px', padding: '10px', width: '100%' }}>
+                                <h3>Website & Social Links</h3>
+                                {isSocialLinks ? (
+                                    <IoIosArrowDown />
+                                ) : (
+                                    <IoIosArrowUp />
+                                )}
+                            </div>
+                            <div style={{ border: '2px solid #F1F2F6', padding: '20px', marginTop: '10px', display: isSocialLinks ? 'none' : 'block' }}>
+                                {socialName.map((name, index) => (
+                                    <div key={index} className="left-side-container" style={{ marginTop: index === 0 ? '-25px' : '10px' }}>
+                                        <div className="left-left-side">
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
+                                                <input
+                                                    style={{ marginRight: '10px' }}
+                                                    type="text"
+                                                    className="form-input"
+                                                    placeholder="e.g. Resume Generator"
+                                                    value={name}
+                                                    onChange={(e) => handleSocialNameChange(index, e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="left-right-side social-links">
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
+                                                <input
+                                                    style={{ marginRight: '10px' }}
+                                                    type="text"
+                                                    className="form-input"
+                                                    placeholder="e.g. https://resume-generator-liard.vercel.app/"
+                                                    value={socialLinks[index]}
+                                                    onChange={(e) => handleSocialLinkChange(index, e.target.value)}
+                                                />
+                                                <p className="delete-icon" onClick={() => removeSocialLinks(index)}>
+                                                    <FiDelete size={25} style={{ marginTop: '4px' }} />
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="add-more" style={{ marginTop: '50px' }} onClick={handleAddSocialLinks}>
+                                    <span><PiPlusBold /> Add more social & links</span>
                                 </div>
                             </div>
 
@@ -429,8 +506,8 @@ function Editing() {
                         </div>
                     </div>
 
-                    <div className={preview ? 'right-side-responsive' : 'right-side'} style={{animation: preview ? 'animatePreview .4s linear' : 'animateClose .4s linear'}}>
-                        <div className='close-preview' onClick={() => setPreview(false)} style={{display: preview ? 'block': 'none'}}>
+                    <div className={preview ? 'right-side-responsive' : 'right-side'} style={{ animation: preview ? 'animatePreview .4s linear' : 'animateClose .4s linear' }}>
+                        <div className='close-preview' onClick={() => setPreview(false)} style={{ display: preview ? 'block' : 'none' }}>
                             <AiOutlineCloseCircle size={30} />
                         </div>
                         <div className='imageSample'>

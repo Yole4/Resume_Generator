@@ -303,6 +303,10 @@
         gap: 0;
     }
 
+    .social-links{
+        margin-top: 20px;
+    }
+
     .left-side {
         width: 100%;
     }
