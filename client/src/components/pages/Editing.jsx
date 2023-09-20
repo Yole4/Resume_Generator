@@ -10,7 +10,6 @@ import { PiPlusBold } from "react-icons/pi";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { FiDelete } from 'react-icons/fi';
 import first from '../assets/images/firstTemplateSample.png';
-import me from '../assets/images/1.jpg';
 
 function Editing() {
     const navigate = useNavigate();
@@ -512,7 +511,7 @@ function Editing() {
                             <AiOutlineCloseCircle size={30} />
                         </div>
                         <div className='imageSample'>
-                            <img src={me} alt="" />
+                            <img src={first} alt="" />
                             <div className="download-button">
                                 <button>Download</button>
                             </div>
