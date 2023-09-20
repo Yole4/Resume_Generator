@@ -229,6 +229,15 @@
         flex-direction: column;
     }
 
+    /* .profile-popup {
+        top: 20px;
+    } */
+
+    .overFlow{
+        padding: 15px;
+        margin: 0;
+    }
+
     .responsive-file {
         display: block;
     }
@@ -251,6 +260,7 @@
         z-index: 5;
         background-color: rgb(107, 107, 126);
         border: 3px solid #ccc;
+        width: 100%;
     }
 
     @keyframes animatePreview {
@@ -271,6 +281,19 @@
         100%{
             transform: translateY(100%);
         }
+    }
+
+    .profile-header{
+        top: 5px;
+        right: 5px;
+    }
+
+    .imageSample{
+        padding: 5px;
+    }
+
+    .imageSample img {
+        width: 100%;
     }
 }
 
