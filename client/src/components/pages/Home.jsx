@@ -1,9 +1,5 @@
 import React, { useRef, useState } from 'react'
-<<<<<<< HEAD
 import '../assets/CSS/CSS.css';
-=======
-import '../assets/CSS.css';
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
 
 import first from '../assets/images/firstTemplateSample.png';
 import secondSimple from '../assets/images/second-simple.png';
@@ -47,11 +43,7 @@ function Home() {
     });
 
     // get started
-<<<<<<< HEAD
     const [getStarted, setGetStarted] = useState(started === 'false' ? false : true);
-=======
-    const [getStarted, setGetStarted] = useState(true);
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
 
     // Create a ref for the target element
     const second = useRef(null);
@@ -88,11 +80,7 @@ function Home() {
                     <div className="welcome-container">
                         <div className='welcome-label'>
                             <div className="welcome-body">
-<<<<<<< HEAD
                                 <TfiWrite size={100} />
-=======
-                                <TfiWrite size={100}/>
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
                                 <h1>Welcome to Online Resume Generator</h1>
                                 <button className='next-button' onClick={secondScroll}>Next</button>
                             </div>
@@ -121,27 +109,16 @@ function Home() {
                     </div>
                 </div>
                 <div class="dots-indicators" style={{ display: getStarted ? 'block' : 'none' }}>
-<<<<<<< HEAD
                     <span class={currentState === 1 ? 'dots active' : 'dots'}></span>
                     <span class={currentState === 2 ? 'dots active' : 'dots'}></span>
                     <span class={currentState === 3 ? 'dots active' : 'dots'}></span>
                     <span class={currentState === 4 ? 'dots active' : 'dots'}></span>
-=======
-                    <span class = {currentState === 1 ? 'dots active' : 'dots'}></span>
-                    <span class = {currentState === 2 ? 'dots active' : 'dots'}></span>
-                    <span class = {currentState === 3 ? 'dots active' : 'dots'}></span>
-                    <span class = {currentState === 4 ? 'dots active' : 'dots'}></span>
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
                 </div>
             </div>
 
             <div style={{ display: getStarted ? 'none' : 'block' }}>
                 <div className='container'>
-<<<<<<< HEAD
                     <div className='home-document' onClick={() => setGetStarted(false)}>
-=======
-                    <div className='home-document'>
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
                         <FcDocument size={35} />
                         <span style={{ position: 'absolute' }}>Resume Maker</span>
                     </div>
@@ -155,11 +132,7 @@ function Home() {
                         <p>Each template is skillfully created and adheres to the precise "resume rules" that employers want. Utilize tried-and-true resume formats to stand out and land a job faster.</p>
 
                         <div className="form-control">
-<<<<<<< HEAD
                             <button className='form-button' onClick={() => navigate('/creating')}>Create My Resume</button>
-=======
-                            <button className='form-button'>Create My Resume</button>
->>>>>>> ed067270aede5129f2663af5f9153559ca4994f1
                         </div>
 
                         {/* template options */}
