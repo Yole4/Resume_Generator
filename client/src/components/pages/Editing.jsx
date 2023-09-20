@@ -10,7 +10,7 @@ import { PiPlusBold } from "react-icons/pi";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { FiDelete } from 'react-icons/fi';
 import first from '../assets/images/firstTemplateSample.png';
-import me from '../assets/images/me.jpg';
+import me from '../assets/images/1.jpg';
 
 function Editing() {
     const navigate = useNavigate();
