@@ -1,0 +1,287 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.left-side {
+    flex: 1;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: auto; */
+    height: 100vh;
+}
+
+.right-side {
+    flex: 1;
+    background-color: rgb(107, 107, 126);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.imageSample {
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imageSample img {
+    height: 80vh;
+    width: auto;
+    margin-top: 5vh;
+}
+
+.download-button {
+    margin-top: 20px;
+    width: 140px;
+
+}
+
+.download-button button {
+    padding: 10px 50px;
+    background-color: #251b82;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 18px;
+}
+
+.download-button button:hover {
+    background-color: #0056b3;
+}
+
+.left-side-container {
+    display: flex;
+    height: auto;
+    width: 100%;
+    margin: 20px 0px 20px 0px;
+    text-align: left;
+    gap: 50px;
+}
+
+.overFlow {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 0px 65px 0px 85px;
+}
+
+.overFlow::-webkit-scrollbar {
+    width: 2px;
+}
+
+.form-control {
+    margin-top: 25px;
+}
+
+.left-left-side {
+    flex: 1;
+    position: relative;
+
+}
+
+#fileInput {
+    display: none;
+}
+
+.custom-file-input {
+    background-color: transparent;
+    color: rgb(124, 124, 153);
+    padding: 10px 0;
+    border: 1px solid transparent;
+    cursor: pointer;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 15px;
+    margin-bottom: -15px;
+}
+
+.icon-container {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.custom-file-input:hover {
+    color: rgb(191, 191, 237);
+}
+
+
+.left-right-side {
+    flex: 1;
+    position: relative;
+
+}
+
+.left-left-side h3 {
+    position: absolute;
+}
+
+.responsive-file {
+    display: none;
+    padding: 10px 20px;
+    position: fixed;
+    border-radius: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    right: 10px;
+    color: #ccc;
+    background-color: lightblue;
+}
+
+.responsive-file:hover{
+    background-color: rgb(73, 181, 218);
+}
+
+.close-preview{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #ccc;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 2px 2px 0px 2px;
+}
+
+.close-preview:hover{
+    background-color: rgb(145, 145, 160);
+}
+
+.profile {
+    color: whitesmoke;
+}
+
+.profile-popup {
+    position: absolute;
+    box-shadow: 1px 1px 10px -1px darkgray;
+    border-radius: 7px;
+    top: 50px;
+    right: 10px;
+    padding: 20px;
+    width: auto;
+    height: auto;
+    background-color: white;
+}
+
+@keyframes profileView {
+    0% {
+        transform: translate(0%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.profile-list {
+    padding-top: 10px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.profile-list:hover {
+    color: rgb(79, 79, 210);
+}
+
+.add-more{
+    color: blue;
+    text-align: left;
+    margin-top: 10px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.add-more:hover{
+    background-color: #F1F2F6;
+}
+
+.delete-icon{
+    margin-top: 8px;
+    padding: 0px 10px;
+    border-radius: 5px;
+    background-color: #f3f1f1;
+    cursor: pointer;
+    color: #706b6b;
+}
+
+.delete-icon:hover{
+    color: rgb(208, 133, 133);
+}
+
+@media (max-width: 912px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .responsive-file {
+        display: block;
+    }
+
+    .profile {
+        color: black;
+    }
+
+    .left-side {
+        width: 100%;
+    }
+
+    .right-side{
+        display: none;
+    }
+
+    .right-side-responsive {
+        position: absolute;
+        top: 0;
+        z-index: 5;
+        background-color: rgb(107, 107, 126);
+        border: 3px solid #ccc;
+    }
+
+    @keyframes animatePreview {
+        0%{
+            transform: translateY(100%);
+        }
+
+        100%{
+            transform: translateY(0%);
+        }
+    }
+
+    @keyframes animateClose {
+        0%{
+            transform: translateY(-100%);
+        }
+
+        100%{
+            transform: translateY(100%);
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .left-side-container {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .left-side {
+        width: 100%;
+    }
+
+}
