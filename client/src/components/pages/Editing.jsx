@@ -389,7 +389,7 @@ function Editing() {
                                     </div>
                                 ))}
                                 <div className="add-more" style={{ marginTop: '50px' }} onClick={addSkill}>
-                                    <span>Add more skill</span>
+                                    <span><PiPlusBold /> Add more skill</span>
                                 </div>
                             </div>
 
@@ -423,7 +423,7 @@ function Editing() {
                                     </div>
                                 ))}
                                 <div className="add-more" style={{ marginTop: '50px' }} onClick={addLanguage}>
-                                    <span>Add more language</span>
+                                    <span><PiPlusBold /> Add more language</span>
                                 </div>
                             </div>
                         </div>
