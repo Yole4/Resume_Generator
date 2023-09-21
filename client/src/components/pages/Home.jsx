@@ -42,7 +42,7 @@ function Home() {
             const requestToInsert = { email, fullname };
             const insertUserData = async () => {
                 try {
-                    const response = await axios.post('http://localhost:3001/api/insert-user', requestToInsert);
+                    const response = await axios.post('https://resume-generator-backend-0cc9.onrender.com/api/insert-user', requestToInsert);
                     
                     if (response.status === 200){
                         console.log("inserted!");
