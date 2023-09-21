@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../assets/CSS/Editing.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { IoPersonCircleSharp, } from "react-icons/io5";
 import { VscHome } from "react-icons/vsc";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
@@ -9,10 +9,75 @@ import { MdSaveAlt, MdLogout } from "react-icons/md";
 import { PiPlusBold } from "react-icons/pi";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { FiDelete } from 'react-icons/fi';
-import first from '../assets/images/firstTemplateSample.png';
+
+import one from '../assets/templates/one.pdf';
+import two from '../assets/templates/two.pdf';
+import three from '../assets/templates/three.pdf';
+import four from '../assets/templates/four.pdf';
+import five from '../assets/templates/five.pdf';
+import six from '../assets/templates/six.pdf';
+import seven from '../assets/templates/seven.pdf';
+import eight from '../assets/templates/eight.pdf';
+import nine from '../assets/templates/nine.pdf';
+import ten from '../assets/templates/ten.pdf';
+import eleven from '../assets/templates/eleven.pdf';
+import twelve from '../assets/templates/twelve.pdf';
+import none from '../assets/templates/my cv.pdf';
+
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 function Editing() {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const { data } = location.state || {};
+
+    const [viewPdf, setViewPdf] = useState(null);
+    
+    useEffect(() => {
+        if (data === "none"){
+            setViewPdf(none);
+        }
+        else if (data === "one"){
+            setViewPdf(one);
+        }
+        else if (data === "two"){
+            setViewPdf(two);
+        }
+        else if (data === "three"){
+            setViewPdf(three);
+        }
+        else if (data === "four"){
+            setViewPdf(four);
+        }
+        else if (data === "five"){
+            setViewPdf(five);
+        }
+        else if (data === "six"){
+            setViewPdf(six);
+        }
+        else if (data === "seven"){
+            setViewPdf(seven);
+        }
+        else if (data === "eight"){
+            setViewPdf(eight);
+        }
+        else if (data === "nine"){
+            setViewPdf(nine);
+        }
+        else if (data === "ten"){
+            setViewPdf(ten);
+        }
+        else if (data === "eleven"){
+            setViewPdf(eleven);
+        }
+        else if (data === "twelve"){
+            setViewPdf(twelve);
+        }
+    }, []);
 
     const [isProfile, setIsProfile] = useState(false);
     const [profileList, setProfileList] = useState(false);
@@ -121,8 +186,8 @@ function Editing() {
                                         </div>
                                         <div className="form-control">
                                             <p>Image</p>
-                                            <label for="fileInput" class="custom-file-input" style={{ marginTop: '-5px' }}>
-                                                <span class="icon-container"><IoPersonCircleSharp size={40} className='person-label' /></span>
+                                            <label htmlFor="fileInput" className="custom-file-input" style={{ marginTop: '-5px' }}>
+                                                <span className="icon-container"><IoPersonCircleSharp size={40} className='person-label' /></span>
                                                 Upload photo
                                             </label>
                                             <input type="file" id="fileInput" className="form-input" />
@@ -195,7 +260,10 @@ function Editing() {
                                 {socialName.map((name, index) => (
                                     <div key={index} className="left-side-container" style={{ marginTop: index === 0 ? '-25px' : '10px' }}>
                                         <div className="left-left-side">
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
+                                            <div style={{ marginTop: '20px' }}>
+                                                <span>Name</span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px' }}>
                                                 <input
                                                     style={{ marginRight: '10px' }}
                                                     type="text"
@@ -207,7 +275,11 @@ function Editing() {
                                             </div>
                                         </div>
                                         <div className="left-right-side social-links">
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
+                                            <div style={{ marginTop: '20px' }}>
+                                                <span>Link</span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px' }}>
+
                                                 <input
                                                     style={{ marginRight: '10px' }}
                                                     type="text"
@@ -511,16 +583,26 @@ function Editing() {
                             <AiOutlineCloseCircle size={30} />
                         </div>
                         <div className='imageSample'>
-                            <img src={first} alt="" />
-                            <div className="download-button">
-                                <button>Download</button>
+                            <div className='imageSample-img'>
+                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.10.111/build/pdf.worker.min.js">
+                                    {viewPdf ? (
+                                        <Viewer fileUrl={viewPdf} />
+                                    ) : (
+                                        <>
+                                            No PDF
+                                        </>
+                                    )}
+                                </Worker>
+                                <div className="download-button">
+                                    <button>Download</button>
+                                </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
                 <div className="profile-header" onClick={(e) => { e.stopPropagation(); setIsProfile(isProfile ? false : true) }}>
-                    <IoPersonCircleSharp size={35} className='profile' />
+                    <IoPersonCircleSharp size={35} className='profiles' />
                 </div>
                 <div onClick={(e) => e.stopPropagation()} style={{ display: isProfile ? 'block' : 'none', animation: isProfile ? 'profileView .1s linear' : '' }} className='profile-popup'>
                     <div className='profile-list'>

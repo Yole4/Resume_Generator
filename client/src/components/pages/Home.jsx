@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import '../assets/CSS/CSS.css';
+import { Document, Page } from 'react-pdf';
 
 import first from '../assets/images/firstTemplateSample.png';
 import secondSimple from '../assets/images/second-simple.png';
@@ -13,13 +14,12 @@ import ninethSimple from '../assets/images/nineth-simple.png';
 import tenthCreative from '../assets/images/tenth-creative.png';
 import eleventhCreative from '../assets/images/eleventh-creative.png';
 import doseSimple from '../assets/images/dose-simple.png';
+import homeEditorIcon from '../assets/images/editor.png';
 
 import { IoPersonCircleSharp } from "react-icons/io5";
-import { FcDocument } from 'react-icons/fc';
 import { BsStars } from 'react-icons/bs';
 import { FaRegSmileBeam } from 'react-icons/fa';
 import { VscFiles } from 'react-icons/vsc';
-import { TfiWrite } from 'react-icons/tfi';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { BsFillEnvelopeFill } from 'react-icons/bs';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
@@ -80,7 +80,8 @@ function Home() {
                     <div className="welcome-container">
                         <div className='welcome-label'>
                             <div className="welcome-body">
-                                <TfiWrite size={100} />
+                                {/* <TfiWrite size={100} /> */}
+                                <img src={homeEditorIcon} style={{height: '100px', width: '100px', color: 'black'}} alt="" />
                                 <h1>Welcome to Online Resume Generator</h1>
                                 <button className='next-button' onClick={secondScroll}>Next</button>
                             </div>
@@ -108,18 +109,19 @@ function Home() {
                         </div>
                     </div>
                 </div>
-                <div class="dots-indicators" style={{ display: getStarted ? 'block' : 'none' }}>
-                    <span class={currentState === 1 ? 'dots active' : 'dots'}></span>
-                    <span class={currentState === 2 ? 'dots active' : 'dots'}></span>
-                    <span class={currentState === 3 ? 'dots active' : 'dots'}></span>
-                    <span class={currentState === 4 ? 'dots active' : 'dots'}></span>
+                <div className="dots-indicators" style={{ display: getStarted ? 'block' : 'none' }}>
+                    <span className={currentState === 1 ? 'dots active' : 'dots'}></span>
+                    <span className={currentState === 2 ? 'dots active' : 'dots'}></span>
+                    <span className={currentState === 3 ? 'dots active' : 'dots'}></span>
+                    <span className={currentState === 4 ? 'dots active' : 'dots'}></span>
                 </div>
             </div>
 
             <div style={{ display: getStarted ? 'none' : 'block' }}>
                 <div className='container'>
                     <div className='home-document' onClick={() => setGetStarted(false)}>
-                        <FcDocument size={35} />
+                        {/* <FcDocument size={35} /> */}
+                        <img src={homeEditorIcon} style={{height: '35px', width: '35px'}} alt="" />
                         <span style={{ position: 'absolute' }}>Resume Maker</span>
                     </div>
                     <div onClick={() => setIsOpenPopup(true)} className='profile-header'>
@@ -131,8 +133,8 @@ function Home() {
                         <h1>Best Resume Templates</h1><br />
                         <p>Each template is skillfully created and adheres to the precise "resume rules" that employers want. Utilize tried-and-true resume formats to stand out and land a job faster.</p>
 
-                        <div className="form-control">
-                            <button className='form-button' onClick={() => navigate('/creating')}>Create My Resume</button>
+                        <div className="form-controls">
+                            <button className='form-buttons' onClick={() => navigate('/creating', { state: { data: 'none' } })}>Create My Resume</button>
                         </div>
 
                         {/* template options */}
@@ -158,73 +160,73 @@ function Home() {
                         {/* templates */}
                         <div className="templates" >
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'one' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={first} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'two' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={secondSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'three' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={thirdSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'four' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={forthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'five' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={fifthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'six' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={sixthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'seven' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={seventhSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'eight' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={eigthCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'nine' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={ninethSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'ten' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={tenthCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'eleven' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={eleventhCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template'>
+                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'twelve' } })}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={doseSimple} alt="" />

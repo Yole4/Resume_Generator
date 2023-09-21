@@ -32,23 +32,24 @@
 
 .imageSample {
     width: 100%;
-    height: 100vh;
     flex-direction: column;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
 }
 
-.imageSample img {
-    height: 80vh;
-    width: auto;
-    margin-top: 5vh;
+.imageSample-img {
+    height: 100%;
+    width: 80%;
 }
 
 .download-button {
-    margin-top: 20px;
+    position: absolute;
+    bottom: 60px;
     width: 140px;
-
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .download-button button {
@@ -155,14 +156,11 @@
     cursor: pointer;
     border-radius: 10px;
     padding: 2px 2px 0px 2px;
+    z-index: 6;
 }
 
 .close-preview:hover{
     background-color: rgb(145, 145, 160);
-}
-
-.profile {
-    color: whitesmoke;
 }
 
 .profile-popup {
@@ -175,6 +173,10 @@
     width: auto;
     height: auto;
     background-color: white;
+}
+
+.profiles{
+    color: whitesmoke;
 }
 
 @keyframes profileView {
@@ -229,9 +231,9 @@
         flex-direction: column;
     }
 
-    /* .profile-popup {
-        top: 20px;
-    } */
+    .profiles{
+        color: black;
+    }
 
     .overFlow{
         padding: 15px;
@@ -287,20 +289,22 @@
         top: 5px;
         right: 5px;
     }
-
-    .imageSample{
-        padding: 5px;
-    }
-
-    .imageSample img {
-        width: 100%;
-    }
 }
 
 @media (max-width: 600px) {
     .left-side-container {
         flex-direction: column;
         gap: 0;
+    }
+
+    .download-button button{
+        font-size: 15px;
+        padding: 10px 30px;
+    }
+
+    .imageSample-img {
+        width: 100%;
+        height: 100%;
     }
 
     .social-links{
