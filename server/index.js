@@ -7,16 +7,16 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://online-resume-generator.onrender.com',
     methods: ["POST", "GET"],
     credentials: true
 }));
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    database: 'resume_gen_db',
-    password: '',
-    user: 'root'
+    host: 'bfdn8rxy3ulf0wlt33ff-mysql.services.clever-cloud.com',
+    database: 'bfdn8rxy3ulf0wlt33ff',
+    password: 'AqkCwjWHOZsZKJHIeoGu',
+    user: 'u6uijlgfezxmmwcc'
 });
 
 db.connect((error) => {
@@ -48,6 +48,6 @@ app.post('/api/insert-user', (req, res) => {
     });
 });
 
-app.listen(3001, () => {
-    console.log('Server running on port 3001');
+app.listen(3306, () => {
+    console.log('Server running on port 3306');
 });
