@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import '../assets/CSS/CSS.css';
 import { Document, Page } from 'react-pdf';
+import axios from 'axios';
 
 import first from '../assets/images/firstTemplateSample.png';
 import secondSimple from '../assets/images/second-simple.png';
@@ -29,6 +30,34 @@ import { useNavigate } from 'react-router-dom';
 function Home() {
     // initialize navigate
     const navigate = useNavigate();
+
+    // get user login credectials on google
+    const [userData, setUserData] = useState([]);
+    const [isLoginGoogle, setIsLoginGoogle] = useState(false);
+
+    useEffect(() => {
+        if (isLoginGoogle) {
+            const email = (userData.email).toString();
+            const fullname = (userData.given_name + " " + userData.family_name).toString();
+            const requestToInsert = { email, fullname };
+            const insertUserData = async () => {
+                try {
+                    const response = await axios.post('http://localhost:3001/api/insert-user', requestToInsert);
+                    
+                    if (response.status === 200){
+                        console.log("inserted!");
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 401){
+                        console.log(error.response.data.message);
+                    }else{
+                        console.log('Error: ', error);
+                    }
+                }
+            }
+            insertUserData();
+        }
+    }, [isLoginGoogle]);
 
     const started = sessionStorage.getItem('started');
 
@@ -81,7 +110,7 @@ function Home() {
                         <div className='welcome-label'>
                             <div className="welcome-body">
                                 {/* <TfiWrite size={100} /> */}
-                                <img src={homeEditorIcon} style={{height: '100px', width: '100px', color: 'black'}} alt="" />
+                                <img src={homeEditorIcon} style={{ height: '100px', width: '100px', color: 'black' }} alt="" />
                                 <h1>Welcome to Online Resume Generator</h1>
                                 <button className='next-button' onClick={secondScroll}>Next</button>
                             </div>
@@ -121,7 +150,7 @@ function Home() {
                 <div className='container'>
                     <div className='home-document' onClick={() => setGetStarted(false)}>
                         {/* <FcDocument size={35} /> */}
-                        <img src={homeEditorIcon} style={{height: '35px', width: '35px'}} alt="" />
+                        <img src={homeEditorIcon} style={{ height: '35px', width: '35px' }} alt="" />
                         <span style={{ position: 'absolute' }}>Resume Maker</span>
                     </div>
                     <div onClick={() => setIsOpenPopup(true)} className='profile-header'>
@@ -255,7 +284,9 @@ function Home() {
                                     onSuccess={credentialResponse => {
                                         // console.log(credentialResponse);
                                         const details = jwt_decode(credentialResponse.credential);
-                                        console.log(details);
+                                        // console.log(details);
+                                        setUserData(details);
+                                        setIsLoginGoogle(true);
                                     }}
                                     onError={() => {
                                         console.log('Login Failed');
