@@ -27,12 +27,23 @@ db.connect((error) => {
 app.post('/api/insert-user', (req, res) => {
     const { email, fullname } = req.body;
 
-    const insert = `INSERT INTO users (email, fullname) VALUES (?, ?)`;
-    db.query(insert, [email, fullname], (error, results) => {
-        if (error){
-            res.status(401).json({message: 'Server side error!'});
-        }else{
-            res.status(200).json({message: 'success!'});
+    const select = `SELECT * FROM users WHERE email = ?`;
+    db.query(select, [email], (error, results) => {
+        if (error) {
+            res.status(401).json({ message: "Server side error" });
+        } else {
+            if (results.length > 0) {
+                res.status(401).json({ message: 'already registered!' });
+            } else {
+                const insert = `INSERT INTO users (email, fullname) VALUES (?, ?)`;
+                db.query(insert, [email, fullname], (error, results) => {
+                    if (error) {
+                        res.status(401).json({ message: 'Server side error!' });
+                    } else {
+                        res.status(200).json({ message: 'success!' });
+                    }
+                });
+            }
         }
     });
 });

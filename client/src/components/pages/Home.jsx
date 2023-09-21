@@ -35,6 +35,9 @@ function Home() {
     const [userData, setUserData] = useState([]);
     const [isLoginGoogle, setIsLoginGoogle] = useState(false);
 
+    const [notLogin, setNotLogin] = useState(false); // partial hahahha
+    const [testing, setTesting] = useState(false); // paritail as well hahahha
+
     useEffect(() => {
         if (isLoginGoogle) {
             const email = (userData.email).toString();
@@ -148,7 +151,7 @@ function Home() {
 
             <div style={{ display: getStarted ? 'none' : 'block' }}>
                 <div className='container'>
-                    <div className='home-document' onClick={() => setGetStarted(false)}>
+                    <div className='home-document'>
                         {/* <FcDocument size={35} /> */}
                         <img src={homeEditorIcon} style={{ height: '35px', width: '35px' }} alt="" />
                         <span style={{ position: 'absolute' }}>Resume Maker</span>
@@ -163,7 +166,7 @@ function Home() {
                         <p>Each template is skillfully created and adheres to the precise "resume rules" that employers want. Utilize tried-and-true resume formats to stand out and land a job faster.</p>
 
                         <div className="form-controls">
-                            <button className='form-buttons' onClick={() => navigate('/creating', { state: { data: 'none' } })}>Create My Resume</button>
+                            <button className='form-buttons'  onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'none'}});}}}>Create My Resume</button>
                         </div>
 
                         {/* template options */}
@@ -189,73 +192,73 @@ function Home() {
                         {/* templates */}
                         <div className="templates" >
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'one' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'one'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={first} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'two' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'two'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={secondSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'three' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'three'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={thirdSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'four' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'four'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={forthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'five' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'five'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={fifthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'six' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'six'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={sixthSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'seven' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'seven'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={seventhSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'eight' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'eight'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={eigthCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'nine' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'nine'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={ninethSimple} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'ten' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'ten'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={tenthCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'eleven' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'eleven'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={eleventhCreative} alt="" />
                             </div>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.simple ? 'block' : 'none' }}>
-                                <div className='bottom-template' onClick={() => navigate('/creating', { state: { data: 'twelve' } })}>
+                                <div className='bottom-template' onClick={() => {if (!notLogin) { setIsOpenPopup(true); }else{ navigate('/creating', {state: {data: 'twelve'}});}}}>
                                     <button>Use This Template</button>
                                 </div>
                                 <img src={doseSimple} alt="" />
@@ -287,6 +290,8 @@ function Home() {
                                         // console.log(details);
                                         setUserData(details);
                                         setIsLoginGoogle(true);
+                                        setNotLogin(true); // trial hahahaha
+                                        setIsOpenPopup(false);
                                     }}
                                     onError={() => {
                                         console.log('Login Failed');
@@ -318,7 +323,11 @@ function Home() {
                         </div>
 
                         <div className='form-control'>
-                            <button className='form-input'>Register</button>
+                            <button className='form-input' onClick={() => setTesting(true)}>Register</button>
+                        </div>
+                        <div style={{position: 'absolute', textAlign: 'center', left: '50%', zIndex: '10', backgroundColor: '#ccc', top: '50%', transform: 'translate(-50%, -50%)', width: '50%', height: 'auto', display: testing ? 'block': 'none'}}>
+                            <span style={{fontSize: '20px'}}>Use Google to register for now!</span><br />
+                            <button onClick={() => setTesting(false)} style={{padding: '10px', fontSize: '15px', backgroundColor: 'lightblue', cursor: 'pointer'}}>OK</button>
                         </div>
 
                         <div className='form-control' style={{ textAlign: 'center' }}>
