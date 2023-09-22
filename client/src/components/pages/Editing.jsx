@@ -28,58 +28,121 @@ import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import axios from 'axios';
+import BackendURL from './backend URL/BackendURL';
 
 function Editing() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const  backendUrl = BackendURL();
+    const token = localStorage.getItem('token');
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [userCredentials, setUserCredentials] = useState('');
+
+    useEffect(() => {
+        setIsLoading(false);
+    }, []);
+
+    useEffect(() => {
+        if (token !== "") {
+            const checkProtected = async () => {
+                setIsLoading(true);
+                try {
+                    const response = await axios.get(`${backendUrl}/protected`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.status === 200) {
+                        const userId = (response.data.user.id).toString();
+
+                        const fetchUserCredentials = async () => {
+                            try {
+                                const response = await axios.post(`${backendUrl}/fetch/api/credentials`, { userId }, {
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`
+                                    }
+                                });
+                                if (response.status === 200) {
+                                    setUserCredentials(response.data.message);
+                                    setIsLoading(false);
+                                }
+                            } catch (error) {
+                                setIsLoading(false);
+                                if (error.response && error.response.status === 401) {
+                                    console.log(error.response.data.message);
+                                } else {
+                                    console.log('Error: ', error);
+                                }
+                            }
+                        }
+                        fetchUserCredentials();
+                    }
+
+                } catch (error) {
+                    setIsLoading(false);
+                    if (error.response && error.response.status === 401) {
+                        console.log(error.response.data.message);
+                    } else {
+                        console.log('Error: ', error);
+                    }
+                }
+            }
+            checkProtected();
+        }
+    }, [token]);
+
     const { data } = location.state || {};
 
     const [viewPdf, setViewPdf] = useState(null);
-    
+
     useEffect(() => {
-        if (data === "none"){
+        if (data === "none") {
             setViewPdf(none);
         }
-        else if (data === "one"){
+        else if (data === "one") {
             setViewPdf(one);
         }
-        else if (data === "two"){
+        else if (data === "two") {
             setViewPdf(two);
         }
-        else if (data === "three"){
+        else if (data === "three") {
             setViewPdf(three);
         }
-        else if (data === "four"){
+        else if (data === "four") {
             setViewPdf(four);
         }
-        else if (data === "five"){
+        else if (data === "five") {
             setViewPdf(five);
         }
-        else if (data === "six"){
+        else if (data === "six") {
             setViewPdf(six);
         }
-        else if (data === "seven"){
+        else if (data === "seven") {
             setViewPdf(seven);
         }
-        else if (data === "eight"){
+        else if (data === "eight") {
             setViewPdf(eight);
         }
-        else if (data === "nine"){
+        else if (data === "nine") {
             setViewPdf(nine);
         }
-        else if (data === "ten"){
+        else if (data === "ten") {
             setViewPdf(ten);
         }
-        else if (data === "eleven"){
+        else if (data === "eleven") {
             setViewPdf(eleven);
         }
-        else if (data === "twelve"){
+        else if (data === "twelve") {
             setViewPdf(twelve);
         }
     }, []);
 
     const [isProfile, setIsProfile] = useState(false);
+    const [isProfileClicked, setIsProfileClicked] = useState(false);
     const [profileList, setProfileList] = useState(false);
     const [employmentHistory, setEmploymentHistory] = useState(true);
     const [educationBackground, setEducationBackground] = useState(true);
@@ -605,8 +668,8 @@ function Editing() {
                     <IoPersonCircleSharp size={35} className='profiles' />
                 </div>
                 <div onClick={(e) => e.stopPropagation()} style={{ display: isProfile ? 'block' : 'none', animation: isProfile ? 'profileView .1s linear' : '' }} className='profile-popup'>
-                    <div className='profile-list'>
-                        <span>< BsFillPersonFill /> Profile</span>
+                    <div className='profile-list' onClick={() => { setIsProfileClicked(true); setIsProfile(false) }}>
+                        <span>< BsFillPersonFill /> {userCredentials && userCredentials[0].fullname}</span>
                     </div>
                     <div className='profile-list' onClick={() => { navigate('/'); sessionStorage.setItem('started', false) }}>
                         <span><VscHome /> Go to Dashboard</span>
@@ -615,13 +678,34 @@ function Editing() {
                         <span><MdSaveAlt /> Saved File</span>
                     </div>
                     <hr />
-                    <div className="profile-list" style={{ marginTop: '5px' }}>
+                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { localStorage.removeItem('token'); navigate('/'); }}>
                         <span><MdLogout /> Logout</span>
                     </div>
                 </div>
                 <div className="responsive-file" onClick={() => setPreview(true)}>
                     <span style={{ color: 'darkcyan' }}>Preview</span>
                 </div>
+
+                {/* Profile Account */}
+                <div onClick={() => setIsProfileClicked(false)} className='popup' style={{ visibility: isProfileClicked ? 'visible' : 'hidden' }} >
+
+                    {/* Register page */}
+                    <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isProfileClicked ? 'dropBottom .3s linear' : '' }} >
+                        <div style={{ textAlign: 'center' }}>
+                            <h3>{userCredentials && userCredentials[0].fullname}</h3><br />
+                        </div>
+                        <hr />
+                        <div className="form-control">
+                            <span>Email: {userCredentials && userCredentials[0].email}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* fetching data screen */}
+            <div class="modal-pop-up-loading" style={{display: isLoading ? 'block' : 'none'}}>
+                <div class="modal-pop-up-loading-spiner"></div>
+                <p>Loading...</p>
             </div>
         </>
     )
