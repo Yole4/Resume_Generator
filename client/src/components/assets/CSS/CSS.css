@@ -303,6 +303,11 @@ body {
 }
 
 @media screen and (max-width: 500px) {
+
+  .error-respond{
+    width: 100%;
+  }
+  
   .popup-body {
     width: 94%;
   }
