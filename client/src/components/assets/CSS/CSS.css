@@ -318,6 +318,10 @@ body {
 }
 
 @media screen and (max-width: 900px) {
+  .error-respond{
+    width: 100%
+  }
+  
   .title {
     width: 80%;
   }
@@ -410,7 +414,7 @@ body {
   position: fixed;
   /* background-color: #7b4ae4; */
   /* background-color: #fb7d60; */
-  width: 100%;
+  width: 50%;
   box-shadow: 0px 0px 10px rgb((0,0,0,0.2));
   border-radius: 8px;
   padding: 10px 20px;
