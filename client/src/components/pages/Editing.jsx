@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../assets/CSS/Editing.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IoPersonCircleSharp, } from "react-icons/io5";
-import { VscHome } from "react-icons/vsc";
+import { VscHome, VscDeviceCamera } from "react-icons/vsc";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdSaveAlt, MdLogout } from "react-icons/md";
@@ -24,6 +24,9 @@ import eleven from '../assets/templates/eleven.pdf';
 import twelve from '../assets/templates/twelve.pdf';
 import none from '../assets/templates/my cv.pdf';
 
+// images
+import givenProfile from '../assets/images/givenProfile.webp';
+
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -35,16 +38,75 @@ function Editing() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const  backendUrl = BackendURL();
+    const backendUrl = BackendURL();
     const token = localStorage.getItem('token');
 
     const [isLoading, setIsLoading] = useState(true);
     const [userCredentials, setUserCredentials] = useState('');
+    const [profileUpload, setProfileUpload] = useState([]);
+    const [autoFetchChecker, setAutoFetchChecker] = useState(false);
+
+    // error message
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isError, setIsError] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     useEffect(() => {
         setIsLoading(false);
     }, []);
 
+    // #####################################################    AUTO PROFILE IMAGE UPLOAD    ########################################
+    useEffect(() => {
+        if (profileUpload) {
+            if (profileUpload.length === 0) {
+                // console.log('nothing change!')
+            }
+            else {
+                setIsLoading(true);
+                const autoUpload = async () => {
+
+                    const requestImageToUpload = new FormData();
+                    requestImageToUpload.append('image', profileUpload);
+                    requestImageToUpload.append('userId', userCredentials[0].id);
+
+                    try {
+                        const response = await axios.post(`${backendUrl}/api/auto-image-upload`, requestImageToUpload, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        if (response.status === 200) {
+                            setIsLoading(false);
+                            setAutoFetchChecker(autoFetchChecker ? false : true);
+
+
+                            setErrorMessage(response.data.message);
+                            setIsSuccess(true);
+
+                            setTimeout(() => {
+                                setIsSuccess(false);
+                            }, 5000);
+                        }
+                    } catch (error) {
+                        setIsLoading(false);
+                        if (error.response && error.response.status === 401) {
+                            setErrorMessage(error.response.data.message);
+                            setIsError(true);
+
+                            setTimeout(() => {
+                                setIsError(false);
+                            }, 5000);
+                        } else {
+                            console.log('Error: ', error);
+                        }
+                    }
+                };
+                autoUpload();
+            }
+        }
+    }, [profileUpload]);
+
+    // #####################################################    FETCH USER DATA    ########################################
     useEffect(() => {
         if (token !== "") {
             const checkProtected = async () => {
@@ -93,7 +155,7 @@ function Editing() {
             }
             checkProtected();
         }
-    }, [token]);
+    }, [token, autoFetchChecker]);
 
     const { data } = location.state || {};
 
@@ -228,7 +290,7 @@ function Editing() {
 
     return (
         <>
-            <div onClick={() => setIsProfile(false)}>
+            <div onClick={() => setIsProfile(false)} style={{ pointerEvents: isLoading ? 'none' : '', background: isLoading ? 'rgba(0,0,0,0.6)' : '' }}>
                 <div className='container'>
                     <div className="left-side">
                         <div className="overFlow" >
@@ -687,25 +749,47 @@ function Editing() {
                 </div>
 
                 {/* Profile Account */}
-                <div onClick={() => setIsProfileClicked(false)} className='popup' style={{ visibility: isProfileClicked ? 'visible' : 'hidden' }} >
+                <div onClick={() => setIsProfileClicked(false)} className='popup' style={{ visibility: isProfileClicked ? 'visible' : 'hidden'}} >
 
                     {/* Register page */}
                     <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isProfileClicked ? 'dropBottom .3s linear' : '' }} >
                         <div style={{ textAlign: 'center' }}>
-                            <h3>{userCredentials && userCredentials[0].fullname}</h3><br />
+                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
+                            <label htmlFor="uploadPhoto" style={{ marginTop: '100px', marginLeft: '-40px', cursor: 'pointer', zIndex: '3', color: 'white' }}>
+                                <VscDeviceCamera size={30} style={{ backgroundColor: 'rgb(71, 71, 98)', padding: '3px', borderRadius: '50%' }} />
+                                <input type="file" id="uploadPhoto" onChange={(e) => setProfileUpload(e.target.files[0])} style={{ display: 'none' }} />
+                            </label>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div>
+                                <h2>{userCredentials && userCredentials[0].fullname}</h2>
+                            </div>
+                            <div style={{marginTop: '10px'}}>
+                                <span>{userCredentials && userCredentials[0].email}</span>
+                            </div><br />
                         </div>
                         <hr />
-                        <div className="form-control">
-                            <span>Email: {userCredentials && userCredentials[0].email}</span>
+                        <div className="form-control" style={{textAlign: 'center'}}>
+                            <span>Other profile view</span>
+                        </div>
+                        <div className="form-control" style={{textAlign: 'center'}}>
+                            <span>(User position)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* fetching data screen */}
-            <div class="modal-pop-up-loading" style={{display: isLoading ? 'block' : 'none'}}>
-                <div class="modal-pop-up-loading-spiner"></div>
+            <div className="modal-pop-up-loading" style={{ display: isLoading ? 'block' : 'none' }}>
+                <div className="modal-pop-up-loading-spiner"></div>
                 <p>Loading...</p>
+            </div>
+
+            {/* Loading div */}
+            <div className='error-respond' style={{ display: isError || isSuccess ? 'block' : 'none', backgroundColor: isSuccess && !isError ? '#7b4ae4' : '#fb7d60' }}>
+                <div>
+                    <h5>{errorMessage}</h5>
+                </div>
             </div>
         </>
     )

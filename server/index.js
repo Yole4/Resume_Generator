@@ -7,6 +7,8 @@ const validator = require('validator');
 const multer = require('multer');
 const cors = require('cors');
 require('dotenv').config();
+const mime = require('mime-types');
+const fs = require('fs');
 
 const app = express();
 app.use(express.json());
@@ -101,7 +103,7 @@ app.get('/protected', verifyToken, (req, res) => {
 // #####################################################################  REGISTER USER USING GOOGLE ACCOUNT  ############################################################################################
 // ###################################################################################################################################################################################
 app.post('/api/insert-user', (req, res) => {
-    const { email, fullname } = req.body;
+    const { email, fullname, picture } = req.body;
 
     const select = `SELECT * FROM users WHERE email = ?`;
     db.query(select, [email], (error, results) => {
@@ -111,8 +113,9 @@ app.post('/api/insert-user', (req, res) => {
             if (results.length > 0) {
                 res.status(401).json({ message: 'Email is already registered!' });
             } else {
-                const insert = `INSERT INTO users (email, fullname) VALUES (?, ?)`;
-                db.query(insert, [email, fullname], (error, results) => {
+
+                const insert = `INSERT INTO users (email, fullname, image) VALUES (?, ?, ?)`;
+                db.query(insert, [email, fullname, picture], (error, results) => {
                     if (error) {
                         res.status(401).json({ message: 'Server side error!' });
                     } else {
@@ -266,6 +269,50 @@ app.post('/fetch/api/credentials', verifyToken, (req, res) => {
             }
         }
     });
+});
+
+// ###################################################################################################################################################################################
+// #####################################################################  AUTO IMAGE UPLOAD  ############################################################################################
+// ###################################################################################################################################################################################
+const imageUpload = multer({
+    dest: 'uploads/',
+});
+
+app.post('/api/auto-image-upload', verifyToken, imageUpload.single('image'), (req, res) => {
+    const {userId} = req.body;
+
+    const originalFileName = req.file.originalname;
+    const uniqueFileName = `${Date.now()}_+_${originalFileName}`;
+    const uniqueFilePath = `uploads/${uniqueFileName}`;
+
+    const typeMime = mime.lookup(originalFileName);
+
+    if ((typeMime === 'image/png') || (typeMime === 'image/jpeg')) {
+        fs.rename(req.file.path, uniqueFilePath, (err) => {
+            if (err) {
+                res.status(401).json({ message: "Error to upload file" });
+            } else {
+                const sanitizedFileName = sanitizeHtml(req.file.originalname); // Sanitize HTML content
+                if (!validator.isLength(sanitizedFileName, { min: 1, max: 255 })) {
+                    return res.status(401).send({ message: "Invalid File Name!" });
+                }
+                else{
+                    const insert = `UPDATE users SET image = ? WHERE id = ?`;
+                    db.query(insert, [uniqueFileName, userId], (error, results) => {
+                        if (error) {
+                            res.status(401).json({message: "Server side error!"});
+                        }else{
+                            res.status(200).json({message: "Profile image changed!"});
+                        }
+                    });
+                }
+            }
+        });
+    }
+    else {
+        res.status(401).json({ message: "Invalid Image Type!" });
+        return;
+    }
 });
 
 app.listen(process.env.DB_PORT, () => {

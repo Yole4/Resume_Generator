@@ -17,6 +17,7 @@ import tenthCreative from '../assets/images/tenth-creative.png';
 import eleventhCreative from '../assets/images/eleventh-creative.png';
 import doseSimple from '../assets/images/dose-simple.png';
 import homeEditorIcon from '../assets/images/editor.png';
+import givenProfile from '../assets/images/givenProfile.webp';
 
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsStars } from 'react-icons/bs';
@@ -27,9 +28,9 @@ import { BsFillEnvelopeFill } from 'react-icons/bs';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { VscHome } from "react-icons/vsc";
+import { VscHome, VscDeviceCamera } from "react-icons/vsc";
 import { BsFillPersonFill } from "react-icons/bs";
-import { MdSaveAlt, MdLogout } from "react-icons/md";
+import { MdSaveAlt, MdLogout, MdModeEdit } from "react-icons/md";
 
 function Home() {
     // initialize navigate
@@ -40,6 +41,8 @@ function Home() {
 
     // user credentials
     const [userCredentials, setUserCredentials] = useState('');
+    const [profileUpload, setProfileUpload] = useState([]);
+    const [autoFetchChecker, setAutoFetchChecker] = useState(false);
 
     // get user register credectials on google
     const [userData, setUserData] = useState([]);
@@ -54,6 +57,57 @@ function Home() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    // #####################################################    AUTO PROFILE IMAGE UPLOAD    ########################################
+    useEffect(() => {
+        if (profileUpload) {
+            if (profileUpload.length === 0) {
+                // console.log('nothing change!')
+            }
+            else {
+                setIsLoading(true);
+                const autoUpload = async () => {
+
+                    const requestImageToUpload = new FormData();
+                    requestImageToUpload.append('image', profileUpload);
+                    requestImageToUpload.append('userId', userCredentials[0].id);
+
+                    try {
+                        const response = await axios.post(`${backendUrl}/api/auto-image-upload`, requestImageToUpload, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        if (response.status === 200) {
+                            setIsLoading(false);
+                            setAutoFetchChecker(autoFetchChecker ? false : true);
+
+
+                            setErrorMessage(response.data.message);
+                            setIsSuccess(true);
+
+                            setTimeout(() => {
+                                setIsSuccess(false);
+                            }, 5000);
+                        }
+                    } catch (error) {
+                        setIsLoading(false);
+                        if (error.response && error.response.status === 401) {
+                            setErrorMessage(error.response.data.message);
+                            setIsError(true);
+
+                            setTimeout(() => {
+                                setIsError(false);
+                            }, 5000);
+                        } else {
+                            console.log('Error: ', error);
+                        }
+                    }
+                };
+                autoUpload();
+            }
+        }
+    }, [profileUpload]);
 
     // #####################################################    HANDLE REGISTER USING MANUAL    ########################################
     const [registerData, setRegisterData] = useState({
@@ -155,6 +209,7 @@ function Home() {
             const email = (userLoginData.email).toString();
             const fullname = (userLoginData.given_name + " " + userLoginData.family_name).toString();
             const requestToInsert = { email, fullname };
+
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
@@ -196,7 +251,10 @@ function Home() {
         if (isRegisterGoogle) {
             const email = (userData.email).toString();
             const fullname = (userData.given_name + " " + userData.family_name).toString();
-            const requestToInsert = { email, fullname };
+            const picture = (userData.picture).toString();
+
+            const requestToInsert = { email, fullname, picture };
+
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
@@ -286,7 +344,7 @@ function Home() {
             }
             checkProtected();
         }
-    }, [token]);
+    }, [token, autoFetchChecker]);
 
     const started = sessionStorage.getItem('started');
 
@@ -334,7 +392,7 @@ function Home() {
 
     return (
         <>
-            <div className='welcome'>
+            <div className='welcome' style={{ pointerEvents: isLoading ? 'none' : '' }}>
                 <div style={{ display: getStarted ? 'block' : 'none', width: '100%' }}>
                     <div className="welcome-container">
                         <div className='welcome-label'>
@@ -376,7 +434,7 @@ function Home() {
                 </div>
             </div>
 
-            <div style={{ display: getStarted ? 'none' : 'block' }} onClick={() => setIsProfile(false)}>
+            <div style={{ display: getStarted ? 'none' : 'block', pointerEvents: isLoading ? 'none' : '' }} onClick={() => setIsProfile(false)}>
                 <div className='container'>
                     <div className='home-document'>
                         {/* <FcDocument size={35} /> */}
@@ -417,7 +475,7 @@ function Home() {
                         </div>
 
                         {/* templates */}
-                        <div className="templates" >
+                        <div className="templates" style={{ visibility: isLoading ? 'hidden' : 'visible' }}>
                             <div className='template-list' style={{ display: templateOptions.allDocument || templateOptions.creative ? 'block' : 'none' }}>
                                 <div className='bottom-template' onClick={() => { if (!notLogin) { setIsOpenPopup(true); } else { navigate('/creating', { state: { data: 'one' } }); } }}>
                                     <button>Use This Template</button>
@@ -573,7 +631,7 @@ function Home() {
                         <span><MdSaveAlt /> Saved File</span>
                     </div>
                     <hr />
-                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { localStorage.removeItem('token'); navigate('/'); window.location.reload(); }}>
+                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { setIsProfile(false); localStorage.removeItem('token'); navigate('/'); window.location.reload(); }}>
                         <span><MdLogout /> Logout</span>
                     </div>
                 </div>
@@ -584,11 +642,26 @@ function Home() {
                     {/* Register page */}
                     <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isProfileClicked ? 'dropBottom .3s linear' : '' }} >
                         <div style={{ textAlign: 'center' }}>
-                            <h3>{userCredentials && userCredentials[0].fullname}</h3><br />
+                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
+                            <label htmlFor="uploadPhoto" style={{ marginTop: '100px', marginLeft: '-40px', cursor: 'pointer', zIndex: '3', color: 'white' }}>
+                                <VscDeviceCamera size={30} style={{ backgroundColor: 'rgb(71, 71, 98)', padding: '3px', borderRadius: '50%' }} />
+                                <input type="file" id="uploadPhoto" onChange={(e) => setProfileUpload(e.target.files[0])} style={{ display: 'none' }} />
+                            </label>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div>
+                                <h2>{userCredentials && userCredentials[0].fullname}</h2>
+                            </div>
+                            <div style={{ marginTop: '10px' }}>
+                                <span>{userCredentials && userCredentials[0].email}</span>
+                            </div><br />
                         </div>
                         <hr />
-                        <div className="form-control">
-                            <span>Email: {userCredentials && userCredentials[0].email}</span>
+                        <div className="form-control" style={{ textAlign: 'center' }}>
+                            <span>Other profile view</span>
+                        </div>
+                        <div className="form-control" style={{ textAlign: 'center' }}>
+                            <span>(User position)</span>
                         </div>
                     </div>
                 </div>
@@ -650,8 +723,8 @@ function Home() {
             </div>
 
             {/* fetching data screen */}
-            <div class="modal-pop-up-loading" style={{ display: isLoading ? 'block' : 'none' }}>
-                <div class="modal-pop-up-loading-spiner"></div>
+            <div className="modal-pop-up-loading" style={{ display: isLoading ? 'block' : 'none' }}>
+                <div className="modal-pop-up-loading-spiner"></div>
                 <p>Loading...</p>
             </div>
 
