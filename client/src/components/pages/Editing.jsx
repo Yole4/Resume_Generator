@@ -228,7 +228,7 @@ function Editing() {
 
     return (
         <>
-            <div onClick={() => setIsProfile(false)}>
+            <div onClick={() => setIsProfile(false)} style={{pointerEvents: isLoading ? 'none' : ''}}>
                 <div className='container'>
                     <div className="left-side">
                         <div className="overFlow" >
