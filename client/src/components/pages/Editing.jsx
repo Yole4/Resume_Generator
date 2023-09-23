@@ -312,7 +312,8 @@ function Editing() {
                                         <div className="form-control">
                                             <p>Image</p>
                                             <label htmlFor="fileInput" className="custom-file-input" style={{ marginTop: '-5px' }}>
-                                                <span className="icon-container"><IoPersonCircleSharp size={40} className='person-label' /></span>
+                                                {/* <span className="icon-container"><IoPersonCircleSharp size={40} className='person-label' /></span> */}
+                                                <span className="icon-container"><img className='person-label' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} /></span>
                                                 Upload photo
                                             </label>
                                             <input type="file" id="fileInput" className="form-input" />
@@ -727,7 +728,8 @@ function Editing() {
                     </div>
                 </div>
                 <div className="profile-header" onClick={(e) => { e.stopPropagation(); setIsProfile(isProfile ? false : true) }}>
-                    <IoPersonCircleSharp size={35} className='profiles' />
+                    {/* <IoPersonCircleSharp size={35} className='profiles' /> */}
+                    <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
                 </div>
                 <div onClick={(e) => e.stopPropagation()} style={{ display: isProfile ? 'block' : 'none', animation: isProfile ? 'profileView .1s linear' : '' }} className='profile-popup'>
                     <div className='profile-list' onClick={() => { setIsProfileClicked(true); setIsProfile(false) }}>
@@ -749,7 +751,7 @@ function Editing() {
                 </div>
 
                 {/* Profile Account */}
-                <div onClick={() => setIsProfileClicked(false)} className='popup' style={{ visibility: isProfileClicked ? 'visible' : 'hidden'}} >
+                <div onClick={() => setIsProfileClicked(false)} className='popup' style={{ visibility: isProfileClicked ? 'visible' : 'hidden' }} >
 
                     {/* Register page */}
                     <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isProfileClicked ? 'dropBottom .3s linear' : '' }} >
@@ -764,15 +766,15 @@ function Editing() {
                             <div>
                                 <h2>{userCredentials && userCredentials[0].fullname}</h2>
                             </div>
-                            <div style={{marginTop: '10px'}}>
+                            <div style={{ marginTop: '10px' }}>
                                 <span>{userCredentials && userCredentials[0].email}</span>
                             </div><br />
                         </div>
                         <hr />
-                        <div className="form-control" style={{textAlign: 'center'}}>
+                        <div className="form-control" style={{ textAlign: 'center' }}>
                             <span>Other profile view</span>
                         </div>
-                        <div className="form-control" style={{textAlign: 'center'}}>
+                        <div className="form-control" style={{ textAlign: 'center' }}>
                             <span>(User position)</span>
                         </div>
                     </div>

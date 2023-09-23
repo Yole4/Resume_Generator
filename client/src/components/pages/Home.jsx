@@ -443,7 +443,8 @@ function Home() {
                     </div>
                     <div onClick={(e) => { e.stopPropagation(); setIsOpenPopup(true); setIsProfile(isProfile ? false : true) }} className='profile-header'>
                         <span className='dot'></span>
-                        <IoPersonCircleSharp size={35} className='profile' />
+                        <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
+                        {/* <IoPersonCircleSharp size={35} className='profile' /> */}
                     </div>
 
                     <div className='title'>
