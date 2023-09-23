@@ -565,7 +565,7 @@ function Home() {
                             <h3>Get Started</h3><br />
                         </div>
                         <div className="modal-close" onClick={() => setIsOpenPopup(false)}>
-                            <AiOutlineCloseCircle size={20} />
+                            <AiOutlineCloseCircle size={30} />
                         </div>
                         <div className="form-control">
                             <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
@@ -642,6 +642,9 @@ function Home() {
 
                     {/* Register page */}
                     <div onClick={(e) => e.stopPropagation()} className='popup-body' style={{ animation: isProfileClicked ? 'dropBottom .3s linear' : '' }} >
+                        <div className="modal-close" onClick={() => setIsProfileClicked(false)}>
+                            <AiOutlineCloseCircle size={30} />
+                        </div>
                         <div style={{ textAlign: 'center' }}>
                             <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
                             <label htmlFor="uploadPhoto" style={{ marginTop: '100px', marginLeft: '-40px', cursor: 'pointer', zIndex: '3', color: 'white' }}>
@@ -674,7 +677,7 @@ function Home() {
                             <h3>Login</h3><br />
                         </div>
                         <div className="modal-close" onClick={() => setIsOpenLogin(false)}>
-                            <AiOutlineCloseCircle size={20} />
+                            <AiOutlineCloseCircle size={30} />
                         </div>
                         <div className="form-control">
                             <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
