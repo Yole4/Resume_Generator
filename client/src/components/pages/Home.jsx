@@ -334,7 +334,7 @@ function Home() {
 
     return (
         <>
-            <div className='welcome'>
+            <div className='welcome' style={{pointerEvents: isLoading ? 'none' : ''}}>
                 <div style={{ display: getStarted ? 'block' : 'none', width: '100%' }}>
                     <div className="welcome-container">
                         <div className='welcome-label'>
@@ -376,7 +376,7 @@ function Home() {
                 </div>
             </div>
 
-            <div style={{ display: getStarted ? 'none' : 'block' }} onClick={() => setIsProfile(false)}>
+            <div style={{ display: getStarted ? 'none' : 'block', pointerEvents: isLoading ? 'none' : '' }} onClick={() => setIsProfile(false)}>
                 <div className='container'>
                     <div className='home-document'>
                         {/* <FcDocument size={35} /> */}
