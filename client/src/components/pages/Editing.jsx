@@ -313,7 +313,7 @@ function Editing() {
                                             <p>Image</p>
                                             <label htmlFor="fileInput" className="custom-file-input" style={{ marginTop: '-5px' }}>
                                                 {/* <span className="icon-container"><IoPersonCircleSharp size={40} className='person-label' /></span> */}
-                                                <span className="icon-container"><img className='person-label' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} /></span>
+                                                <span className="icon-container"><img className='person-label' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/assets/image uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} /></span>
                                                 Upload photo
                                             </label>
                                             <input type="file" id="fileInput" className="form-input" />
@@ -729,7 +729,7 @@ function Editing() {
                 </div>
                 <div className="profile-header" onClick={(e) => { e.stopPropagation(); setIsProfile(isProfile ? false : true) }}>
                     {/* <IoPersonCircleSharp size={35} className='profiles' /> */}
-                    <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
+                    <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/assets/image uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
                 </div>
                 <div onClick={(e) => e.stopPropagation()} style={{ display: isProfile ? 'block' : 'none', animation: isProfile ? 'profileView .1s linear' : '' }} className='profile-popup'>
                     <div className='profile-list' onClick={() => { setIsProfileClicked(true); setIsProfile(false) }}>
@@ -742,7 +742,7 @@ function Editing() {
                         <span><MdSaveAlt /> Saved File</span>
                     </div>
                     <hr />
-                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { localStorage.removeItem('token'); navigate('/'); }}>
+                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { localStorage.removeItem('token'); navigate('/', {state: {data: 'logout'}}); }}>
                         <span><MdLogout /> Logout</span>
                     </div>
                 </div>
@@ -759,7 +759,7 @@ function Editing() {
                             <AiOutlineCloseCircle size={30} />
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
+                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/assets/image uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
                             <label htmlFor="uploadPhoto" style={{ marginTop: '100px', marginLeft: '-40px', cursor: 'pointer', zIndex: '3', color: 'white' }}>
                                 <VscDeviceCamera size={30} style={{ backgroundColor: 'rgb(71, 71, 98)', padding: '3px', borderRadius: '50%' }} />
                                 <input type="file" id="uploadPhoto" onChange={(e) => setProfileUpload(e.target.files[0])} style={{ display: 'none' }} />

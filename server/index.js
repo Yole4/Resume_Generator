@@ -1,14 +1,21 @@
 const express = require('express');
-const mysql = require('mysql2');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const sanitizeHtml = require('sanitize-html');
-const validator = require('validator');
 const multer = require('multer');
 const cors = require('cors');
-require('dotenv').config();
 const mime = require('mime-types');
 const fs = require('fs');
+const { OAuth2Client } = require('google-auth-library');
+const sanitizeHtml = require('sanitize-html');
+const validator = require('validator');
+require('dotenv').config();
+
+// require database connection
+const db = require('./utils/database/DatabaseConnection');
+// require auth
+const { verifyToken } = require('./utils/auth/AuthVerify');
+// require sanitize and validator
+const { sanitizeAndValidate } = require('./utils/validator and sanitizer/ValidatorAndSanitizer');
 
 const app = express();
 app.use(express.json());
@@ -18,82 +25,17 @@ app.use(cors({
     credentials: true
 }));
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    user: process.env.DB_USER
-});
-
-db.connect((error) => {
-    if (error) throw error;
-    console.log("Connected to the database!");
-});
-
-// Helper function to sanitize and validate input
-// this is the validator and sanitizer of the input of the user
-const sanitizeAndValidate = (input, validationRules) => {
-
-    // clean multiple spaces
-    const cleanedInput = input.replace(/\s+/g, ' ');
-
-    const sanitizedInput = sanitizeHtml(cleanedInput.trim());
-
-    for (const rule of validationRules) {
-        if (!rule.validator(sanitizedInput)) {
-            return false;
-        }
-    }
-
-    return sanitizedInput;
-};
-
 // initialize my secret key
 const secretKey = process.env.SECRET_KEY;
-
-// require uploads folder
-app.use('/uploads', express.static('uploads'));
-
-// #####################################################################    CURRENT DATE FORMAT  ######################################################################################
-function getCurrentFormattedDate() {
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-    };
-
-    const currentDate = new Date();
-    return new Intl.DateTimeFormat('en-US', options).format(currentDate);
-}
-
-// #####################################################################    VERIFY TOKEN SIDE  ######################################################################################
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Token missing or invalid' });
-    } else {
-        const token = authHeader.substring('Bearer '.length);
-
-        jwt.verify(token, secretKey, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: 'Token is expired or invalid' });
-            }
-
-            // Store decoded user data in the request
-            req.user = decoded;
-            next();
-        });
-    }
-};
+// initailize GOOGLE_CLIENT_ID
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // ###################################################################################################################################################################################
 // #####################################################################  PROTECTED SIDE  ############################################################################################
 // ###################################################################################################################################################################################
 app.get('/protected', verifyToken, (req, res) => {
-    const { user } = req; // Decoded user data from the token
+    const { user } = req; 
 
     res.status(200).json({ message: 'Success', user: user });
 });
@@ -103,96 +45,43 @@ app.get('/protected', verifyToken, (req, res) => {
 // #####################################################################  REGISTER USER USING GOOGLE ACCOUNT  ############################################################################################
 // ###################################################################################################################################################################################
 app.post('/api/insert-user', (req, res) => {
-    const { email, fullname, picture } = req.body;
 
-    const select = `SELECT * FROM users WHERE email = ?`;
-    db.query(select, [email], (error, results) => {
-        if (error) {
-            res.status(401).json({ message: "Server side error" });
-        } else {
-            if (results.length > 0) {
-                res.status(401).json({ message: 'Email is already registered!' });
-            } else {
+    const someAsyncFunction = async () => {
+        try {
 
-                const insert = `INSERT INTO users (email, fullname, image) VALUES (?, ?, ?)`;
-                db.query(insert, [email, fullname, picture], (error, results) => {
-                    if (error) {
-                        res.status(401).json({ message: 'Server side error!' });
-                    } else {
-                        // res.status(200).json({ message: 'success!' });
-                        const fetchData = {
-                            id: results.insertId,
-                            email: email,
-                            fullname: fullname
-                        };
+            const { userData } = req.body;
+            const ticket = await googleClient.verifyIdToken({
+                idToken: userData,
+                audience: GOOGLE_CLIENT_ID,
+            });
 
-                        const token = jwt.sign(fetchData, secretKey);
+            const payload = ticket.getPayload();
+            const user = {
+                googleId: payload.sub,
+                email: payload.email,
+                name: `${payload.given_name} ${payload.family_name}`,
+                picture: payload.picture,
+            };
 
-                        res.status(200).json({ token: token });
-                    }
-                });
-            }
-        }
-    });
-});
-
-// ###################################################################################################################################################################################
-// #####################################################################  LOGIN USER USING GOOGLE ACCOUNT  ############################################################################################
-// ###################################################################################################################################################################################
-app.post('/api/login', (req, res) => {
-    const { email, fullname } = req.body;
-
-    const select = `SELECT * FROM users WHERE email = ?`;
-    db.query(select, [email], (error, results) => {
-        if (error) {
-            res.status(401).json({ message: "Server side error" });
-        } else {
-            if (results.length > 0) {
-                // res.status(200).json({ message: 'success!' });
-
-                const fetchData = {
-                    id: results[0].id,
-                    email: results[0].email,
-                    fullname: results[0].fullname
-                };
-
-                const token = jwt.sign(fetchData, secretKey);
-
-                res.status(200).json({ token: token });
-            } else {
-                res.status(401).json({ message: 'Email is not registered!' });
-            }
-        }
-    });
-});
-
-// ###################################################################################################################################################################################
-// #####################################################################  REGISTER USER USING MANUAL  ############################################################################################
-// ###################################################################################################################################################################################
-app.post('/api/manual/register', (req, res) => {
-    const { name, email, password, confirmPassword } = req.body;
-
-    if (password.length > 7) {
-        if (password === confirmPassword) {
-            const select = `SELECT * FROM users WHERE email = ?`;
-            db.query(select, [email], (error, results) => {
+            const select = `SELECT * FROM users WHERE google_id = ?`;
+            db.query(select, [user.googleId], (error, results) => {
                 if (error) {
                     res.status(401).json({ message: "Server side error" });
                 } else {
                     if (results.length > 0) {
-                        res.status(401).json({ message: 'Email is already in used!' });
+                        res.status(401).json({ message: 'Email is already registered!' });
                     } else {
-                        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
-                        const insert = `INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)`;
-                        db.query(insert, [name, email, hashedPassword], (error, results) => {
+                        const insert = `INSERT INTO users (google_id, email, fullname, image) VALUES (?, ?, ?, ?)`;
+                        db.query(insert, [user.googleId, user.email, user.name, user.picture], (error, results) => {
                             if (error) {
-                                res.status(401).json({ message: "Server side error!" });
+                                res.status(401).json({ message: 'Server side error!' });
                             } else {
+                                // res.status(200).json({ message: 'success!' });
                                 const fetchData = {
                                     id: results.insertId,
-                                    email: email,
-                                    fullname: name
+                                    email: user.email,
+                                    fullname: user.name
                                 };
 
                                 const token = jwt.sign(fetchData, secretKey);
@@ -203,13 +92,132 @@ app.post('/api/manual/register', (req, res) => {
                     }
                 }
             });
-        }
-        else {
-            res.status(401).json({ message: "Password and confirm password is not equal!" });
+
+        } catch (error) {
+            res.status(401).json({ message: 'Google login failed' });
+            console.log(error);
         }
     }
+    someAsyncFunction();
+});
+
+// ###################################################################################################################################################################################
+// #####################################################################  LOGIN USER USING GOOGLE ACCOUNT  ############################################################################################
+// ###################################################################################################################################################################################
+app.post('/api/login', (req, res) => {
+
+    const someAsyncFunction = async () => {
+        try {
+
+            const { userLoginData } = req.body;
+            const ticket = await googleClient.verifyIdToken({
+                idToken: userLoginData,
+                audience: GOOGLE_CLIENT_ID,
+            });
+
+            const payload = ticket.getPayload();
+            const user = {
+                googleId: payload.sub,
+                email: payload.email,
+                name: `${payload.given_name} ${payload.family_name}`,
+                picture: payload.picture,
+            };
+
+            const select = `SELECT * FROM users WHERE google_id = ?`;
+            db.query(select, [user.googleId], (error, results) => {
+                if (error) {
+                    res.status(401).json({ message: "Server side error" });
+                } else {
+                    if (results.length > 0) {
+                        // res.status(200).json({ message: 'success!' });
+
+                        const fetchData = {
+                            id: results[0].id,
+                            email: results[0].email,
+                            fullname: results[0].fullname
+                        };
+
+                        const token = jwt.sign(fetchData, secretKey);
+
+                        res.status(200).json({ token: token });
+                    } else {
+                        res.status(401).json({ message: 'Email is not registered!' });
+                    }
+                }
+            });
+
+        } catch (error) {
+            res.status(401).json({ message: 'Google login failed' });
+            console.log(error);
+        }
+    }
+    someAsyncFunction();
+});
+
+// ###################################################################################################################################################################################
+// #####################################################################  REGISTER USER USING MANUAL  ############################################################################################
+// ###################################################################################################################################################################################
+app.post('/api/manual/register', (req, res) => {
+    const { name, username, password, confirmPassword } = req.body;
+
+    const validationRules = [
+        { validator: validator.isLength, options: { min: 1, max: 50 } },
+    ]
+
+    const santiizedName = sanitizeAndValidate(name, validationRules);
+    const sanitizeUsername = sanitizeAndValidate(username, validationRules);
+    const sanitizePassword = sanitizeAndValidate(password, validationRules);
+    const sanitizeConfirmPassword = sanitizeAndValidate(confirmPassword, validationRules);
+
+    if (!santiizedName || !sanitizeUsername || !sanitizePassword || !sanitizeConfirmPassword) {
+        res.status(401).json({ message: "Invalid Input!" });
+    }
     else {
-        res.status(401).json({ message: "Password must have at least 7 characters" });
+        if (sanitizePassword.length >= 7 && password.length <= 20) {
+            if (sanitizePassword === sanitizeConfirmPassword) {
+                if (sanitizeUsername.length >= 5) {
+                    const select = `SELECT * FROM users WHERE username = ?`;
+                    db.query(select, [sanitizeUsername], (error, results) => {
+                        if (error) {
+                            res.status(401).json({ message: "Server side error" });
+                        } else {
+                            if (results.length > 0) {
+                                res.status(401).json({ message: 'Username is already in used!' });
+                            } else {
+                                const hashedPassword = crypto.createHash('sha256').update(sanitizePassword).digest('hex');
+
+                                const insert = `INSERT INTO users (fullname, username, password) VALUES (?, ?, ?)`;
+                                db.query(insert, [santiizedName, sanitizeUsername, hashedPassword], (error, results) => {
+                                    if (error) {
+                                        res.status(401).json({ message: "Server side error!" });
+                                    } else {
+                                        const fetchData = {
+                                            id: results.insertId,
+                                            username: sanitizeUsername,
+                                            fullname: santiizedName
+                                        };
+
+                                        const token = jwt.sign(fetchData, secretKey);
+
+                                        res.status(200).json({ token: token });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                else {
+                    res.status(401).json({ message: "Username must have at least 5 characters" });
+                }
+
+            }
+            else {
+                res.status(401).json({ message: "Password and confirm password is not equal!" });
+            }
+        }
+        else {
+            res.status(401).json({ message: "Password must have only 7 to 20 characters!" });
+        }
     }
 });
 
@@ -217,37 +225,47 @@ app.post('/api/manual/register', (req, res) => {
 // #####################################################################  LOGIN USER USING MANUAL  ############################################################################################
 // ###################################################################################################################################################################################
 app.post('/api/manual/login', (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const select = `SELECT * FROM users WHERE email = ?`;
-    db.query(select, [email], (error, results) => {
-        if (error) {
-            res.status(401).json({ message: "Server side error" });
-        } else {
-            if (results.length > 0) {
-                const dbPassword = results[0].password;
-                const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+    const validationRules = [
+        { validator: validator.isLength, options: { min: 1, max: 50 } },
+    ];
 
-                if (dbPassword === hashedPassword) {
-                    const fetchData = {
-                        id: results[0].id,
-                        email: results[0].email,
-                        fullname: results[0].fullname,
-                        password: results[0].password
-                    };
+    const usernameSanitized = sanitizeAndValidate(username, validationRules);
+    const passwordSanitized = sanitizeAndValidate(password, validationRules);
 
-                    const token = jwt.sign(fetchData, secretKey);
+    if (!usernameSanitized || !passwordSanitized) {
+        res.status(401).json({ message: "Invalid Input!" });
+    } else {
+        const select = `SELECT * FROM users WHERE username = ?`;
+        db.query(select, [usernameSanitized], (error, results) => {
+            if (error) {
+                res.status(401).json({ message: "Server side error" });
+            } else {
+                if (results.length > 0) {
+                    const dbPassword = results[0].password;
+                    const hashedPassword = crypto.createHash('sha256').update(passwordSanitized).digest('hex');
 
-                    res.status(200).json({ token: token });
-                } else {
-                    res.status(401).json({ message: "Invalid Password!" });
+                    if (dbPassword === hashedPassword) {
+                        const fetchData = {
+                            id: results[0].id,
+                            username: results[0].usernameSanitized,
+                            fullname: results[0].fullname
+                        };
+
+                        const token = jwt.sign(fetchData, secretKey);
+
+                        res.status(200).json({ token: token });
+                    } else {
+                        res.status(401).json({ message: "Invalid Password!" });
+                    }
+                }
+                else {
+                    res.status(401).json({ message: 'Invalid Username!' });
                 }
             }
-            else {
-                res.status(401).json({ message: 'Email is not registered!' });
-            }
-        }
-    });
+        });
+    }
 });
 
 // ###################################################################################################################################################################################
@@ -257,61 +275,85 @@ app.post('/api/manual/login', (req, res) => {
 app.post('/fetch/api/credentials', verifyToken, (req, res) => {
     const { userId } = req.body;
 
-    const select = `SELECT * FROM users WHERE id = ?`;
-    db.query(select, [userId], (error, results) => {
-        if (error) {
-            res.status(401).json({ message: "server side error!" });
-        } else {
-            if (results.length > 0) {
-                res.status(200).json({ message: results });
+    const validationRules = [
+        { validator: validator.isLength, options: { min: 1, max: 50 } },
+    ];
+
+    const sanitizeUserId = sanitizeAndValidate(userId, validationRules);
+
+    if (!sanitizeUserId) {
+        res.status(401).json({ message: "Invalid Input!" });
+    }
+    else {
+        const select = `SELECT * FROM users WHERE id = ?`;
+        db.query(select, [sanitizeUserId], (error, results) => {
+            if (error) {
+                res.status(401).json({ message: "server side error!" });
             } else {
-                res.status(401).json({ message: "No user found!" });
+                if (results.length > 0) {
+                    res.status(200).json({ message: results });
+                } else {
+                    res.status(401).json({ message: "No user found!" });
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 // ###################################################################################################################################################################################
 // #####################################################################  AUTO IMAGE UPLOAD  ############################################################################################
 // ###################################################################################################################################################################################
+// require uploads folder
+app.use('/assets', express.static('assets'));
 const imageUpload = multer({
-    dest: 'uploads/',
+    dest: 'assets/image uploads/',
 });
 
 app.post('/api/auto-image-upload', verifyToken, imageUpload.single('image'), (req, res) => {
-    const {userId} = req.body;
+    const { userId } = req.body;
 
-    const originalFileName = req.file.originalname;
-    const uniqueFileName = `${Date.now()}_+_${originalFileName}`;
-    const uniqueFilePath = `uploads/${uniqueFileName}`;
+    const validationRules = [
+        { validator: validator.isLength, options: { min: 1, max: 50 } },
+    ];
 
-    const typeMime = mime.lookup(originalFileName);
+    const sanitizeUserId = sanitizeAndValidate(userId, validationRules);
 
-    if ((typeMime === 'image/png') || (typeMime === 'image/jpeg')) {
-        fs.rename(req.file.path, uniqueFilePath, (err) => {
-            if (err) {
-                res.status(401).json({ message: "Error to upload file" });
-            } else {
-                const sanitizedFileName = sanitizeHtml(req.file.originalname); // Sanitize HTML content
-                if (!validator.isLength(sanitizedFileName, { min: 1, max: 255 })) {
-                    return res.status(401).send({ message: "Invalid File Name!" });
-                }
-                else{
-                    const insert = `UPDATE users SET image = ? WHERE id = ?`;
-                    db.query(insert, [uniqueFileName, userId], (error, results) => {
-                        if (error) {
-                            res.status(401).json({message: "Server side error!"});
-                        }else{
-                            res.status(200).json({message: "Profile image changed!"});
-                        }
-                    });
-                }
-            }
-        });
+    if (!sanitizeUserId) {
+        res.status(401).json({ message: "Invalid Input!" });
     }
     else {
-        res.status(401).json({ message: "Invalid Image Type!" });
-        return;
+        const originalFileName = req.file.originalname;
+        const uniqueFileName = `${Date.now()}_+_${originalFileName}`;
+        const uniqueFilePath = `assets/image uploads/${uniqueFileName}`;
+
+        const typeMime = mime.lookup(originalFileName);
+
+        if ((typeMime === 'image/png') || (typeMime === 'image/jpeg')) {
+            fs.rename(req.file.path, uniqueFilePath, (err) => {
+                if (err) {
+                    res.status(401).json({ message: "Error to upload file" });
+                } else {
+                    const sanitizedFileName = sanitizeHtml(req.file.originalname); // Sanitize HTML content
+                    if (!validator.isLength(sanitizedFileName, { min: 1, max: 255 })) {
+                        return res.status(401).send({ message: "Invalid File Name!" });
+                    }
+                    else {
+                        const insert = `UPDATE users SET image = ? WHERE id = ?`;
+                        db.query(insert, [uniqueFileName, sanitizeUserId], (error, results) => {
+                            if (error) {
+                                res.status(401).json({ message: "Server side error!" });
+                            } else {
+                                res.status(200).json({ message: "Profile image changed!" });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            res.status(401).json({ message: "Invalid Image Type!" });
+            return;
+        }
     }
 });
 

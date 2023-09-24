@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import '../assets/CSS/CSS.css';
 import { Document, Page } from 'react-pdf';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import BackendURL from './backend URL/BackendURL';
 
 import first from '../assets/images/firstTemplateSample.png';
@@ -25,16 +27,17 @@ import { FaRegSmileBeam } from 'react-icons/fa';
 import { VscFiles } from 'react-icons/vsc';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { BsFillEnvelopeFill } from 'react-icons/bs';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import jwt_decode from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
 import { VscHome, VscDeviceCamera } from "react-icons/vsc";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdSaveAlt, MdLogout, MdModeEdit } from "react-icons/md";
 
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import jwt_decode from 'jwt-decode';
+
 function Home() {
     // initialize navigate
     const navigate = useNavigate();
+    const location = useLocation();
 
     const backendUrl = BackendURL();
     const token = localStorage.getItem('token');
@@ -57,6 +60,18 @@ function Home() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    const { data } = location.state || {};
+    useEffect(() => {
+        if (data === "logout"){
+            setIsSuccess(true);
+            setErrorMessage("Logout Success!");
+
+            setTimeout(() => {
+                setIsSuccess(false);
+            }, 5000);
+        }
+    }, []);
 
     // #####################################################    AUTO PROFILE IMAGE UPLOAD    ########################################
     useEffect(() => {
@@ -112,7 +127,7 @@ function Home() {
     // #####################################################    HANDLE REGISTER USING MANUAL    ########################################
     const [registerData, setRegisterData] = useState({
         name: '',
-        email: '',
+        username: '',
         password: '',
         confirmPassword: ''
     });
@@ -122,11 +137,11 @@ function Home() {
         setIsLoading(true);
 
         const name = registerData.name;
-        const email = registerData.email;
+        const username = registerData.username;
         const password = registerData.password;
         const confirmPassword = registerData.confirmPassword;
 
-        const requestRegisterData = { name, email, password, confirmPassword };
+        const requestRegisterData = { name, username, password, confirmPassword };
 
         try {
             const response = await axios.post(`${backendUrl}/api/manual/register`, requestRegisterData);
@@ -159,16 +174,16 @@ function Home() {
 
     // #####################################################    HANDLE LOGIN USING MANUAL    ########################################
     const [loginData, setLoginData] = useState({
-        email: '',
+        username: '',
         password: ''
     });
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const email = loginData.email;
+        const username = loginData.username;
         const password = loginData.password;
-        const loginRequest = { email, password };
+        const loginRequest = { username, password };
 
         try {
             const response = await axios.post(`${backendUrl}/api/manual/login`, loginRequest);
@@ -206,14 +221,11 @@ function Home() {
     // #####################################################    HANDLE LOGIN USING GOOGLE    ########################################
     useEffect(() => {
         if (isLoginGoogle) {
-            const email = (userLoginData.email).toString();
-            const fullname = (userLoginData.given_name + " " + userLoginData.family_name).toString();
-            const requestToInsert = { email, fullname };
 
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
-                    const response = await axios.post(`${backendUrl}/api/login`, requestToInsert);
+                    const response = await axios.post(`${backendUrl}/api/login`, {userLoginData});
 
                     if (response.status === 200) {
                         localStorage.setItem('token', response.data.token);
@@ -249,16 +261,11 @@ function Home() {
     // #####################################################    HANDLE REGISTER USING GOOGLE    ########################################
     useEffect(() => {
         if (isRegisterGoogle) {
-            const email = (userData.email).toString();
-            const fullname = (userData.given_name + " " + userData.family_name).toString();
-            const picture = (userData.picture).toString();
-
-            const requestToInsert = { email, fullname, picture };
 
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
-                    const response = await axios.post(`${backendUrl}/api/insert-user`, requestToInsert);
+                    const response = await axios.post(`${backendUrl}/api/insert-user`, {userData});
 
                     if (response.status === 200) {
                         localStorage.setItem('token', response.data.token);
@@ -443,7 +450,7 @@ function Home() {
                     </div>
                     <div onClick={(e) => { e.stopPropagation(); setIsOpenPopup(true); setIsProfile(isProfile ? false : true) }} className='profile-header'>
                         <span className='dot'></span>
-                        <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
+                        <img className='profile' src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/assets/image uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '40px', width: '40px', border: '3px solid #ccc' }} />
                         {/* <IoPersonCircleSharp size={35} className='profile' /> */}
                     </div>
 
@@ -570,12 +577,13 @@ function Home() {
                         <div className="form-control">
                             <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
                                 <GoogleLogin
+                                    cookiePolicy={'single_host_origin'}
+                                    buttonText="Register as google"
                                     className='form-input'
                                     onSuccess={credentialResponse => {
                                         // console.log(credentialResponse);
-                                        const details = jwt_decode(credentialResponse.credential);
-                                        // console.log(details);
-                                        setUserData(details);
+                                        // const details = jwt_decode(credentialResponse.credential);
+                                        setUserData(credentialResponse.credential);
                                         setIsRegisterGoogle(true);
                                         setIsOpenPopup(false);
                                     }}
@@ -595,8 +603,8 @@ function Home() {
                             </div>
 
                             <div className='form-control'>
-                                <p >Email</p>
-                                <input type="email" className='form-input' value={registerData.email} onChange={(e) => setRegisterData((prev) => ({ ...prev, email: e.target.value }))} placeholder='Your@gmail.com' />
+                                <p >Username</p>
+                                <input type="text" className='form-input' value={registerData.username} onChange={(e) => setRegisterData((prev) => ({ ...prev, username: e.target.value }))} placeholder='Username' />
                             </div>
 
                             <div className='form-control'>
@@ -632,7 +640,7 @@ function Home() {
                         <span><MdSaveAlt /> Saved File</span>
                     </div>
                     <hr />
-                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { setIsProfile(false); localStorage.removeItem('token'); navigate('/'); window.location.reload(); }}>
+                    <div className="profile-list" style={{ marginTop: '5px' }} onClick={() => { setIsLoading(true); setIsProfile(false); localStorage.removeItem('token'); navigate('/'); setIsSuccess(true); setErrorMessage("Logout Success!"); setTimeout(() => { setIsSuccess(false); }, 5000); setIsLoading(false); window.location.reload(); }}>
                         <span><MdLogout /> Logout</span>
                     </div>
                 </div>
@@ -646,7 +654,7 @@ function Home() {
                             <AiOutlineCloseCircle size={30} />
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
+                            <img src={userCredentials && userCredentials[0].image[0] === "h" ? userCredentials[0].image : userCredentials && userCredentials[0].image[0] && userCredentials[0].image[0].match(/^\d/) ? `${backendUrl}/assets/image uploads/${userCredentials[0].image}` : givenProfile} alt="" style={{ borderRadius: '50%', height: '130px', width: '130px', border: '3px solid #ccc' }} />
                             <label htmlFor="uploadPhoto" style={{ marginTop: '100px', marginLeft: '-40px', cursor: 'pointer', zIndex: '3', color: 'white' }}>
                                 <VscDeviceCamera size={30} style={{ backgroundColor: 'rgb(71, 71, 98)', padding: '3px', borderRadius: '50%' }} />
                                 <input type="file" id="uploadPhoto" onChange={(e) => setProfileUpload(e.target.files[0])} style={{ display: 'none' }} />
@@ -682,11 +690,13 @@ function Home() {
                         <div className="form-control">
                             <GoogleOAuthProvider clientId="791915019480-6n1kepg7vfup1dnkggkekr8fvpjk6m5g.apps.googleusercontent.com">
                                 <GoogleLogin
+                                    cookiePolicy={'single_host_origin'}
+                                    buttonText="Login as google"
                                     className='form-input'
                                     onSuccess={credentialResponse => {
                                         // console.log(credentialResponse);
-                                        const details = jwt_decode(credentialResponse.credential);
-                                        setUserLoginData(details);
+                                        // const details = jwt_decode(credentialResponse.credential);
+                                        setUserLoginData(credentialResponse.credential);
                                         setIsLoginGoogle(true);
                                         setIsOpenLogin(false);
                                     }}
@@ -701,8 +711,8 @@ function Home() {
 
                         <form onSubmit={handleLogin}>
                             <div className='form-control'>
-                                <p >Email</p>
-                                <input type="email" className='form-input' value={loginData.email} onChange={(e) => setLoginData((prev) => ({ ...prev, email: e.target.value }))} placeholder='Your@gmail.com' />
+                                <p >Username</p>
+                                <input type="text" className='form-input' value={loginData.username} onChange={(e) => setLoginData((prev) => ({ ...prev, username: e.target.value }))} placeholder='Username' />
                             </div>
 
                             <div className='form-control'>
