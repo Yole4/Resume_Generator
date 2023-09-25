@@ -10,6 +10,12 @@ const sanitizeHtml = require('sanitize-html');
 const validator = require('validator');
 require('dotenv').config();
 
+// documents required
+const Docxtemplater = require('docxtemplater');
+const axios = require('axios');
+const FormData = require('form-data');
+const JSZip = require('jszip');
+
 // require database connection
 const db = require('./utils/database/DatabaseConnection');
 // require auth
@@ -35,7 +41,7 @@ const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 // #####################################################################  PROTECTED SIDE  ############################################################################################
 // ###################################################################################################################################################################################
 app.get('/protected', verifyToken, (req, res) => {
-    const { user } = req; 
+    const { user } = req;
 
     res.status(200).json({ message: 'Success', user: user });
 });
@@ -353,6 +359,238 @@ app.post('/api/auto-image-upload', verifyToken, imageUpload.single('image'), (re
         else {
             res.status(401).json({ message: "Invalid Image Type!" });
             return;
+        }
+    }
+});
+
+// ###################################################################################################################################################################################
+// #####################################################################  FETCH USER RESUME DATA  ############################################################################################
+// ###################################################################################################################################################################################
+app.post('/api/get-resume-data', verifyToken, (req, res) => {
+    const { userId } = req.body;
+
+    const select = `SELECT * FROM resume_data WHERE user_id = ?`;
+    db.query(select, [userId], (error, results) => {
+        if (error) {
+            res.status(401).json({ message: "Server side error!" });
+        } else {
+            if (results.length > 0) {
+                res.status(200).json({ message: results });
+            } else {
+                res.status(401).json({ message: "No data found!" });
+            }
+        }
+    });
+});
+
+// ###################################################################################################################################################################################
+// #####################################################################  AUTO FETCH UPDATED DOCUMENT  ############################################################################################
+// ###################################################################################################################################################################################
+// require uploads folder
+app.use('/pdfFiles', express.static('pdfFiles'));
+
+app.post('/api/auto-fetch-document', verifyToken, (req, res) => {
+    const { personalDetails, computerLiterate, webDevelopment, programming, database, language, userId } = req.body;
+
+    // check the name first if not empty
+    if (personalDetails.firstName === "" || personalDetails.middleName === "" || personalDetails.lastName === "") {
+        res.status(401).json({ message: "Please provide the complete name first!" });
+    } else {
+        // computer literate
+        const computer_literate = computerLiterate.map(item => {
+            return {
+                items: item
+            }
+        });
+
+        // web development
+        const web_development = webDevelopment.map(item => {
+            return {
+                items: item
+            }
+        });
+
+        // programming
+        const programmingList = programming.map(item => {
+            return {
+                items: item
+            }
+        });
+
+        // database
+        const databaseList = database.map(item => {
+            return {
+                items: item
+            }
+        });
+
+        // Languages
+        const languageList = language.map(item => {
+            return {
+                items: item
+            }
+        });
+
+        const templateContent = fs.readFileSync('document templates/my cv.docx', 'binary');
+
+        // Create a new Docxtemplater instance
+        const doc = new Docxtemplater();
+        doc.loadZip(new JSZip(templateContent));
+
+        const list = {
+            first_name: (personalDetails.firstName).toUpperCase(),
+            middle_name: (personalDetails.middleName).toUpperCase(),
+            last_name: (personalDetails.lastName).toUpperCase(),
+            // image: `<img src='pdf files/picture.png' width='200' height='150' />`,
+            address: personalDetails.address,
+            phone_number: personalDetails.phoneNumber,
+            email: personalDetails.email,
+            objectives: personalDetails.objectives,
+            course: personalDetails.course,
+            gender: personalDetails.gender,
+            civil_status: personalDetails.civilStatus,
+            religion: personalDetails.religion,
+            nationality: personalDetails.nationality,
+            place_of_birth: personalDetails.placeOfBirth,
+            age: personalDetails.age,
+            birth_date: personalDetails.birthDate,
+            languageList: languageList,
+            computer_literate: computer_literate,
+            programmingList: programmingList,
+            web_development: web_development,
+            databaseList: databaseList
+        }
+
+        doc.setData(list);
+
+        doc.render();
+
+        // file name of user
+        const fileName = `${personalDetails.lastName} ${personalDetails.firstName} ${personalDetails.middleName}.pdf`;
+        console.log(fileName);
+
+        // Generate the output DOCX file content
+        const outputContent = doc.getZip().generate({ type: 'nodebuffer' });
+
+        // Write the output to a new DOCX file
+        fs.writeFileSync('pdfFiles/generated.docx', outputContent);
+
+        const formData = new FormData()
+        formData.append('instructions', JSON.stringify({
+            parts: [
+                {
+                    file: "document"
+                }
+            ]
+        }))
+        formData.append('document', fs.createReadStream('pdfFiles/generated.docx'))
+
+            ; (async () => {
+                try {
+                    const response = await axios.post('https://api.pspdfkit.com/build', formData, {
+                        headers: formData.getHeaders({
+                            'Authorization': 'Bearer pdf_live_1r20h0fQcxRP3jWBLeB97zNZAZMYkXjcuPVzPIfCt0d'
+                        }),
+                        responseType: "stream"
+                    })
+
+                    response.data.pipe(fs.createWriteStream(`pdfFiles/${fileName}`));
+                    fs.unlinkSync('pdfFiles/generated.docx');
+
+                    // insert credentials to database
+                    const select = `SELECT * FROM resume_data WHERE user_id = ?`;
+                    db.query(select, [userId], (error, results) => {
+                        if (error) {
+                            res.status(401).json({ message: "Server side error!" });
+                        }
+                        if (results.length > 0) {
+                            // update
+                            const updateResumeData = `UPDATE resume_data SET first_name = ?, middle_name = ?, last_name = ?, address = ?, phone_number = ?,
+                                email = ?,
+                                objectives = ?,
+                                course = ?,
+                                gender = ?,
+                                civil_status = ?,
+                                religion = ?,
+                                nationality = ?,
+                                place_of_birth = ?,
+                                age = ?,
+                                birth_date = ?,
+                                file_name = ?
+                            WHERE user_id = ?
+                            `;
+
+                            db.query(updateResumeData, [
+                                personalDetails.firstName,
+                                personalDetails.middleName,
+                                personalDetails.lastName,
+                                personalDetails.address,
+                                personalDetails.phoneNumber,
+                                personalDetails.email,
+                                personalDetails.objectives,
+                                personalDetails.course,
+                                personalDetails.gender,
+                                personalDetails.civilStatus,
+                                personalDetails.religion,
+                                personalDetails.nationality,
+                                personalDetails.placeOfBirth,
+                                personalDetails.age,
+                                personalDetails.birthDate,
+                                fileName,
+                                userId
+                            ], (error, results) => {
+                                if (error) {
+                                    res.status(401).json({ message: "server side error!" });
+                                } else {
+                                    // insert language, skills etc.
+                                    res.status(200).json({ message: "partial update success!" });
+                                }
+                            });
+                        }
+                        else {
+                            const insertResumeData = `INSERT INTO resume_data (first_name, middle_name, last_name, address, phone_number, email, objectives, course, gender, civil_status, religion, nationality, place_of_birth, age, birth_date, file_name, user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+                            db.query(insertResumeData, [
+                                personalDetails.firstName,
+                                personalDetails.middleName,
+                                personalDetails.lastName,
+                                personalDetails.address,
+                                personalDetails.phoneNumber,
+                                personalDetails.email,
+                                personalDetails.objectives,
+                                personalDetails.course,
+                                personalDetails.gender,
+                                personalDetails.civilStatus,
+                                personalDetails.religion,
+                                personalDetails.nationality,
+                                personalDetails.placeOfBirth,
+                                personalDetails.age,
+                                personalDetails.birthDate,
+                                fileName,
+                                userId
+                            ], (error, results) => {
+                                if (error) {
+                                    res.status(401).json({ message: "server side error!" });
+                                } else {
+                                    // insert language, skills etc.
+                                    res.status(200).json({ message: "partial success!" });
+                                }
+                            });
+                        }
+                    });
+
+                } catch (e) {
+                    const errorString = await streamToString(e.response.data)
+                    console.log(errorString)
+                }
+            })()
+
+        function streamToString(stream) {
+            const chunks = []
+            return new Promise((resolve, reject) => {
+                stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)))
+                stream.on("error", (err) => reject(err))
+                stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")))
+            })
         }
     }
 });
