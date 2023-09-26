@@ -44,6 +44,21 @@
     width: 80%;
 }
 
+.generate-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    /* transform: translateX(-50%); */
+    cursor: pointer;
+    background-color: #8277d0;;
+    border-radius: 5px;
+    padding: 0px 5px 0px 5px;
+}
+
+.generate-button:hover{
+    background-color: #c2baff;
+}
+
 .download-button {
     position: absolute;
     bottom: 60px;
@@ -53,7 +68,6 @@
 }
 
 .download-button button {
-    /* padding: 10px 50px; */
     background-color: #251b82;
     color: #fff;
     border: none;

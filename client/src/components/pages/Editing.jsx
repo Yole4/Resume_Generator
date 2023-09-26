@@ -169,7 +169,17 @@ function Editing() {
                                                     objectives: resumeResponseData[0].objectives,
                                                 }));
 
-                                                setIsGenerate(true);
+                                                const languages = (resumeResponseData[0].language).split(',');
+                                                const computerLiterates = (resumeResponseData[0].computer_literate).split(',');
+                                                const programmings = (resumeResponseData[0].programming).split(',');
+                                                const webDevelopments = (resumeResponseData[0].web_development).split(',');
+                                                const databases = (resumeResponseData[0].db).split(',');
+
+                                                setLanguage(languages);
+                                                setComputerLiterate(computerLiterates);
+                                                setProgramming(programmings);
+                                                setWebDevelopment(webDevelopments);
+                                                setDatabase(databases);
                                             }
 
                                         } catch (error) {
@@ -434,7 +444,6 @@ function Editing() {
         objectives: '',
     });
     const [fetchLoading, setFetchLoading] = useState(false);
-    const [isGenerate, setIsGenerate] = useState(false);
 
     const generateResume = async (e) => {
         e.preventDefault();
@@ -453,7 +462,6 @@ function Editing() {
                 // console.log("success");
                 setAutoFetchChecker(autoFetchChecker ? false : true);
                 setFetchLoading(false);
-                setIsGenerate(true);
                 setViewPdf('');
             }
         } catch (error) {
@@ -470,14 +478,6 @@ function Editing() {
             }
         }
     }
-
-    useEffect(() => {
-        if (personalDetails || computerLiterate || programming || webDevelopment || database || language) {
-            setIsGenerate(false);
-        } else {
-            setIsGenerate(true);
-        }
-    }, [personalDetails, computerLiterate, programming, webDevelopment, database, language]);
 
     // #######################################  DOWNLOAD RESUME ####################################################    
     const downloadResume = async () => {
@@ -902,10 +902,11 @@ function Editing() {
                                                         style={{ marginRight: '10px' }}
                                                         type="text"
                                                         className="form-input"
-                                                        placeholder="e.g. React.js"
+                                                        placeholder="e.g. Microsoft Word"
                                                         value={skill}
                                                         onChange={(e) => handleComputerLiterateChange(index, e.target.value)}
                                                     />
+
                                                     <p className="delete-icon" onClick={() => removeComputerLiterate(index)}>
                                                         <FiDelete size={25} style={{ marginTop: '4px' }} />
                                                     </p>
@@ -929,7 +930,7 @@ function Editing() {
                                                         style={{ marginRight: '10px' }}
                                                         type="text"
                                                         className="form-input"
-                                                        placeholder="e.g. React.js"
+                                                        placeholder="e.g. JavaScript"
                                                         value={skill}
                                                         onChange={(e) => handleProgrammingChange(index, e.target.value)}
                                                     />
@@ -956,7 +957,7 @@ function Editing() {
                                                         style={{ marginRight: '10px' }}
                                                         type="text"
                                                         className="form-input"
-                                                        placeholder="e.g. React.js"
+                                                        placeholder="e.g. HTML, CSS etc."
                                                         value={skill}
                                                         onChange={(e) => handleWebDevelopmentChange(index, e.target.value)}
                                                     />
@@ -983,7 +984,7 @@ function Editing() {
                                                         style={{ marginRight: '10px' }}
                                                         type="text"
                                                         className="form-input"
-                                                        placeholder="e.g. React.js"
+                                                        placeholder="e.g. MySql"
                                                         value={skill}
                                                         onChange={(e) => handleDatabaseChange(index, e.target.value)}
                                                     />
@@ -1085,10 +1086,10 @@ function Editing() {
                                         </>
                                     )}
                                 </Worker>
-
-                                {/* <div className="generate-button" onClick={downloadResume}>
-                                    <button><TbDownload size={20} /> Download</button>
-                                </div> */}
+                                <div className="generate-button" onClick={downloadResume}>
+                                    <TbDownload size={30} />
+                                    {/* <button> Download Document</button> */}
+                                </div>
                                 <div className="download-button" onClick={generateResume}>
                                     <button><LuRefreshCw size={20} /> Refresh</button>
                                 </div>
