@@ -35,7 +35,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 
 function Home() {
-    // initialize navigate
+    // initialize navigate testing cloning
     const navigate = useNavigate();
     const location = useLocation();
 
