@@ -513,6 +513,18 @@ function Editing() {
         }
     };
 
+    // #############################################    input data background color #######################################################
+    // const [backgroundColorChecker, setBackgroundColorChecker] = useState(false);
+    // useEffect(() => {
+    //     if (personalDetails.firstName.length > 0){
+    //         setBackgroundColorChecker(true);
+    //     }
+    //     else{
+    //         setBackgroundColorChecker(false);
+    //     }
+
+    // }, [personalDetails, language, computerLiterate, programming, webDevelopment, database]);
+
     return (
         <>
             <div onClick={() => setIsProfile(false)} style={{ pointerEvents: isLoading ? 'none' : '', background: isLoading ? 'rgba(0,0,0,0.6)' : '' }}>
@@ -545,38 +557,38 @@ function Editing() {
                                         </div>
                                         <div className="form-control">
                                             <span>First Name</span>
-                                            <input type="text" className='form-input' value={personalDetails.firstName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, firstName: e.target.value }))} placeholder='First Name' />
+                                            <input style={{backgroundColor: personalDetails.firstName ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' value={personalDetails.firstName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, firstName: e.target.value }))} placeholder='First Name' />
                                         </div>
                                         <div className="form-control">
                                             <span>Middle Name</span>
-                                            <input type="text" className='form-input' placeholder='Middle Name' value={personalDetails.middleName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, middleName: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.middleName ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Middle Name' value={personalDetails.middleName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, middleName: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Last Name</span>
-                                            <input type="text" className='form-input' placeholder='Last Name' value={personalDetails.lastName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, lastName: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.lastName ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Last Name' value={personalDetails.lastName} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, lastName: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Address</span>
-                                            <input type="text" className='form-input' placeholder='Address' value={personalDetails.address} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, address: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.address ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Address' value={personalDetails.address} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, address: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Phone Number</span>
-                                            <input type="number" className='form-input' placeholder='Phone Number' value={personalDetails.phoneNumber} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, phoneNumber: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.phoneNumber ? 'rgb(230, 226, 242)' : ''}} type="number" className='form-input' placeholder='Phone Number' value={personalDetails.phoneNumber} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, phoneNumber: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Email</span>
-                                            <input type="email" className='form-input' placeholder='Your@gmail.com' value={personalDetails.email} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, email: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.email ? 'rgb(230, 226, 242)' : ''}} type="email" className='form-input' placeholder='Your@gmail.com' value={personalDetails.email} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, email: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Course</span>
-                                            <input type="text" className='form-input' placeholder='e.g BS Computer Science' value={personalDetails.course} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, course: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.course ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='e.g BS Computer Science' value={personalDetails.course} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, course: e.target.value }))} />
                                         </div>
                                     </div>
 
                                     <div className="left-right-side">
                                         <div className="form-control">
                                             <span>Gender</span>
-                                            <select name="" id="" className='form-input' value={personalDetails.gender} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, gender: e.target.value }))}>
+                                            <select style={{backgroundColor: personalDetails.gender ? 'rgb(230, 226, 242)' : ''}} name="" id="" className='form-input' value={personalDetails.gender} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, gender: e.target.value }))}>
                                                 <option value="" disabled>Select Gender</option>
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
@@ -586,7 +598,7 @@ function Editing() {
                                         </div>
                                         <div className="form-control">
                                             <span>Civil Status</span>
-                                            <select name="" id="" className='form-input' value={personalDetails.civilStatus} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, civilStatus: e.target.value }))}>
+                                            <select style={{backgroundColor: personalDetails.civilStatus ? 'rgb(230, 226, 242)' : ''}} name="" id="" className='form-input' value={personalDetails.civilStatus} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, civilStatus: e.target.value }))}>
                                                 <option value="" disabled>Select Civil Status</option>
                                                 <option value="Single">Single</option>
                                                 <option value="Married">Married</option>
@@ -597,23 +609,23 @@ function Editing() {
                                         </div>
                                         <div className="form-control">
                                             <span>Religion</span>
-                                            <input type="text" className='form-input' placeholder='Religion' value={personalDetails.religion} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, religion: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.religion ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Religion' value={personalDetails.religion} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, religion: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Nationality</span>
-                                            <input type="text" className='form-input' placeholder='Nationality' value={personalDetails.nationality} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, nationality: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.nationality ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Nationality' value={personalDetails.nationality} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, nationality: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Place of Birth</span>
-                                            <input type="text" className='form-input' placeholder='Place of Birth' value={personalDetails.placeOfBirth} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, placeOfBirth: e.target.value }))} />
+                                            <input style={{backgroundColor: personalDetails.placeOfBirth ? 'rgb(230, 226, 242)' : ''}} type="text" className='form-input' placeholder='Place of Birth' value={personalDetails.placeOfBirth} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, placeOfBirth: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Age</span>
-                                            <input type="number" className='form-input' placeholder='Age' value={personalDetails.age} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, age: e.target.value }))} />
+                                            <input type="number" style={{backgroundColor: personalDetails.age ? 'rgb(230, 226, 242)' : ''}} className='form-input' placeholder='Age' value={personalDetails.age} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, age: e.target.value }))} />
                                         </div>
                                         <div className="form-control">
                                             <span>Birth Date</span>
-                                            <input type="date" className='form-input' placeholder='Birth Date' value={personalDetails.birthDate} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, birthDate: e.target.value }))} />
+                                            <input type="date" style={{backgroundColor: personalDetails.birthDate ? 'rgb(230, 226, 242)' : ''}} className='form-input' placeholder='Birth Date' value={personalDetails.birthDate} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, birthDate: e.target.value }))} />
                                         </div>
                                     </div>
                                 </div>
@@ -687,7 +699,7 @@ function Editing() {
                                 <div className="description-container">
                                     <div className="form-control" style={{ textAlign: 'left', marginTop: '0' }}>
                                         <span>Objectives</span>
-                                        <textarea name="" id="" cols="30" rows="8" style={{ height: 'auto', padding: '10px' }} className='form-input' placeholder='Write your objectives here...' value={personalDetails.objectives} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, objectives: e.target.value }))}></textarea>
+                                        <textarea name="" id="" cols="30" rows="8" style={{ height: 'auto', padding: '10px', backgroundColor: personalDetails.objectives ? 'rgb(230, 226, 242)' : '' }} className='form-input' placeholder='Write your objectives here...' value={personalDetails.objectives} onChange={(e) => setPersonalDetails((prev) => ({ ...prev, objectives: e.target.value }))}></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -899,7 +911,7 @@ function Editing() {
                                             <div className="left-left-side">
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
                                                     <input
-                                                        style={{ marginRight: '10px' }}
+                                                        style={{ marginRight: '10px', backgroundColor: computerLiterate[index] ? 'rgb(230, 226, 242)' : '' }}
                                                         type="text"
                                                         className="form-input"
                                                         placeholder="e.g. Microsoft Word"
@@ -927,7 +939,7 @@ function Editing() {
                                             <div className="left-left-side">
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
                                                     <input
-                                                        style={{ marginRight: '10px' }}
+                                                        style={{ marginRight: '10px', backgroundColor: programming[index] ? 'rgb(230, 226, 242)' : '' }}
                                                         type="text"
                                                         className="form-input"
                                                         placeholder="e.g. JavaScript"
@@ -954,7 +966,7 @@ function Editing() {
                                             <div className="left-left-side">
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
                                                     <input
-                                                        style={{ marginRight: '10px' }}
+                                                        style={{ marginRight: '10px', backgroundColor: webDevelopment[index] ? 'rgb(230, 226, 242)' : '' }}
                                                         type="text"
                                                         className="form-input"
                                                         placeholder="e.g. HTML, CSS etc."
@@ -981,7 +993,7 @@ function Editing() {
                                             <div className="left-left-side">
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
                                                     <input
-                                                        style={{ marginRight: '10px' }}
+                                                        style={{ marginRight: '10px', backgroundColor: database[index] ? 'rgb(230, 226, 242)' : '' }}
                                                         type="text"
                                                         className="form-input"
                                                         placeholder="e.g. MySql"
@@ -1050,7 +1062,7 @@ function Editing() {
                                         <div className="left-left-side">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '-30px', marginTop: '10px' }}>
                                                 <input
-                                                    style={{ marginRight: '10px' }}
+                                                    style={{ marginRight: '10px', backgroundColor: language[index] ? 'rgb(230, 226, 242)' : '' }}
                                                     type="text"
                                                     className="form-input"
                                                     placeholder="e.g. English"
@@ -1160,10 +1172,14 @@ function Editing() {
             </div>
 
             {/* fetching data screen */}
-            <div className="modal-pop-up-loading" style={{ display: isLoading ? 'block' : 'none' }}>
-                <div className="modal-pop-up-loading-spiner"></div>
-                <p>Loading...</p>
-            </div>
+            {isLoading && (
+                <div className="popup">
+                    <div className="modal-pop-up-loading">
+                        <div className="modal-pop-up-loading-spiner"></div>
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            )}
 
             {/* Loading div */}
             <div className='error-respond' style={{ display: isError || isSuccess ? 'block' : 'none', backgroundColor: isSuccess && !isError ? '#7b4ae4' : '#fb7d60' }}>

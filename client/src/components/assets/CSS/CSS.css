@@ -172,7 +172,7 @@ body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 2;
+  z-index: 2000;
 }
 
 .popup-body {
@@ -238,11 +238,11 @@ body {
 
 }
 
-.form-control {
+.form-controls {
   margin-top: 15px;
 }
 
-.form-controls {
+.form-control {
   margin-top: 15px;
 }
 
@@ -267,7 +267,7 @@ body {
 }
 
 .form-input:hover {
-  border-color: rgb(142, 142, 242);
+  border-color: rgb(172, 172, 222);
 }
 
 .bottom-color {
@@ -306,8 +306,6 @@ body {
 
 .error-respond{
   position: fixed;
-  /* background-color: #7b4ae4; */
-  /* background-color: #fb7d60; */
   width: 50%;
   box-shadow: 0px 0px 10px rgb((0,0,0,0.2));
   border-radius: 8px;

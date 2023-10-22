@@ -63,7 +63,7 @@ function Home() {
 
     const { data } = location.state || {};
     useEffect(() => {
-        if (data === "logout"){
+        if (data === "logout") {
             setIsSuccess(true);
             setErrorMessage("Logout Success!");
 
@@ -225,7 +225,7 @@ function Home() {
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
-                    const response = await axios.post(`${backendUrl}/api/login`, {userLoginData});
+                    const response = await axios.post(`${backendUrl}/api/login`, { userLoginData });
 
                     if (response.status === 200) {
                         localStorage.setItem('token', response.data.token);
@@ -265,7 +265,7 @@ function Home() {
             const insertUserData = async () => {
                 setIsLoading(true);
                 try {
-                    const response = await axios.post(`${backendUrl}/api/insert-user`, {userData});
+                    const response = await axios.post(`${backendUrl}/api/insert-user`, { userData });
 
                     if (response.status === 200) {
                         localStorage.setItem('token', response.data.token);
@@ -737,10 +737,14 @@ function Home() {
             </div>
 
             {/* fetching data screen */}
-            <div className="modal-pop-up-loading" style={{ display: isLoading ? 'block' : 'none' }}>
-                <div className="modal-pop-up-loading-spiner"></div>
-                <p>Loading...</p>
-            </div>
+            {isLoading && (
+                <div className="popup">
+                    <div className="modal-pop-up-loading">
+                        <div className="modal-pop-up-loading-spiner"></div>
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            )}
 
             {/* Loading div */}
             <div className='error-respond' style={{ display: isError || isSuccess ? 'block' : 'none', backgroundColor: isSuccess && !isError ? '#7b4ae4' : '#fb7d60' }}>

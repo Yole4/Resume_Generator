@@ -257,6 +257,10 @@
     box-shadow: 1px 1px 20px -1px rgb(150, 149, 149);
 }
 
+.input-background-color{
+    background-color: lightblue;
+}
+
 @media (max-width: 912px) {
     .container {
         flex-direction: column;
